@@ -1,0 +1,527 @@
+@import "tailwindcss";
+
+@theme {
+  /* Títulos / UI: Baloo 2 (muy infantil); Fredoka como respaldo */
+  --font-headline: "Baloo 2", "Fredoka", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --font-label: "Baloo 2", "Fredoka", system-ui, sans-serif;
+
+  /* New kid-friendly adventure palette */
+  --color-primary: #4A90E2;
+  --color-primary-container: #6BB5FF;
+  --color-primary-dim: #3570B8;
+  --color-secondary: #E6A800;
+  --color-secondary-container: #FFD93D;
+  --color-secondary-dim: #B88600;
+  --color-secondary-fixed: #FFD93D;
+  --color-secondary-fixed-dim: #F0C400;
+  --color-tertiary: #FF6B6B;
+  --color-tertiary-container: #FF9E9E;
+  --color-tertiary-dim: #D94545;
+  --color-success: #6BCB77;
+  --color-success-dim: #4DA85A;
+  --color-magic: #9D4EDD;
+  --color-magic-dim: #7B2FBB;
+  --color-magic-glow: #C77DFF;
+  --color-background: #1E1E2F;
+  --color-surface: #252540;
+  --color-surface-bright: #2E2E4A;
+  --color-surface-dim: #181828;
+  --color-surface-container-lowest: #1A1A30;
+  --color-surface-container-low: #222238;
+  --color-surface-container: #2A2A45;
+  --color-surface-container-high: #32324E;
+  --color-surface-container-highest: #3A3A58;
+  --color-on-surface: #E8E8F0;
+  --color-on-surface-variant: #A0A0BE;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #1A3A5C;
+  --color-on-secondary-container: #3D2E00;
+  --color-on-tertiary-container: #5C1A1A;
+  --color-on-secondary-fixed: #3D2E00;
+  --color-outline: #5A5A78;
+  --color-outline-variant: #44445A;
+  --color-error: #FF6B6B;
+  --color-error-container: #FF9E9E;
+  --color-error-dim: #D94545;
+}
+
+@layer base {
+  body {
+    @apply bg-background font-body text-on-surface selection:bg-primary-container selection:text-on-primary;
+  }
+
+  /* Botones con la misma voz “juego” que los títulos (Baloo / Fredoka) */
+  button {
+    font-family: var(--font-headline);
+  }
+}
+
+@layer utilities {
+  .toy-shadow {
+    box-shadow: 0 8px 0 0 rgba(0,0,0,0.25), 0 12px 30px rgba(0,0,0,0.3);
+  }
+  .toy-button-shadow {
+    box-shadow: 0 6px 0 0 rgba(0,0,0,0.35);
+  }
+  .toy-button-shadow:active {
+    box-shadow: 0 2px 0 0 rgba(0,0,0,0.35);
+    transform: translateY(4px);
+  }
+  .map-mesh {
+    background-image:
+      radial-gradient(circle, rgba(74,144,226,0.08) 2px, transparent 2px),
+      radial-gradient(ellipse at 50% 0%, rgba(157,78,221,0.15) 0%, transparent 60%);
+    background-size: 40px 40px, 100% 100%;
+  }
+  .squish-physics:active {
+    transform: scale(0.92);
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .bevel-primary {
+    box-shadow: 0 6px 0 0 #3570B8, 0 8px 20px rgba(74,144,226,0.3);
+  }
+  .bevel-secondary {
+    box-shadow: 0 6px 0 0 #B88600, 0 8px 20px rgba(255,217,61,0.3);
+  }
+  .bevel-tertiary {
+    box-shadow: 0 6px 0 0 #D94545, 0 8px 20px rgba(255,107,107,0.3);
+  }
+  .bevel-magic {
+    box-shadow: 0 6px 0 0 #7B2FBB, 0 8px 20px rgba(157,78,221,0.4);
+  }
+  .bevel-success {
+    box-shadow: 0 6px 0 0 #4DA85A, 0 8px 20px rgba(107,203,119,0.3);
+  }
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(74,144,226,0.5), 0 0 40px rgba(74,144,226,0.2);
+  }
+  .glow-secondary {
+    box-shadow: 0 0 20px rgba(255,217,61,0.5), 0 0 40px rgba(255,217,61,0.2);
+  }
+  .glow-magic {
+    box-shadow: 0 0 20px rgba(157,78,221,0.6), 0 0 40px rgba(157,78,221,0.3);
+  }
+  .glow-success {
+    box-shadow: 0 0 20px rgba(107,203,119,0.5), 0 0 40px rgba(107,203,119,0.2);
+  }
+  .glow-error {
+    box-shadow: 0 0 20px rgba(255,107,107,0.5), 0 0 40px rgba(255,107,107,0.2);
+  }
+  .card-dark {
+    background: linear-gradient(145deg, #2A2A45, #222238);
+    border: 2px solid rgba(255,255,255,0.08);
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /** Alias al stack de títulos (Baloo + Fredoka) para bloques que quieran el mismo aire */
+  .font-playful {
+    font-family: "Baloo 2", "Fredoka", system-ui, sans-serif;
+  }
+  .audio-kids-range {
+    @apply h-4 w-full cursor-pointer appearance-none rounded-full;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.08));
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35);
+  }
+  .audio-kids-range:disabled {
+    @apply cursor-not-allowed opacity-45;
+  }
+  .audio-kids-range::-webkit-slider-runnable-track {
+    height: 1rem;
+    border-radius: 9999px;
+    background: transparent;
+  }
+  .audio-kids-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: -0.375rem;
+    border-radius: 9999px;
+    border: 3px solid white;
+    cursor: grab;
+    background: linear-gradient(180deg, #fff9c4, #ffd93d);
+    box-shadow:
+      0 4px 0 #b88600,
+      0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+  .audio-kids-range:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: translateY(1px);
+    box-shadow:
+      0 2px 0 #b88600,
+      0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+  .audio-kids-range::-moz-range-track {
+    height: 1rem;
+    border-radius: 9999px;
+    background: transparent;
+  }
+  .audio-kids-range::-moz-range-thumb {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 3px solid white;
+    border-radius: 9999px;
+    cursor: grab;
+    background: linear-gradient(180deg, #fff9c4, #ffd93d);
+    box-shadow:
+      0 4px 0 #b88600,
+      0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.filled-icon {
+  font-variation-settings: 'FILL' 1;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+  .floating-character {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Trompetas victoria (sprite PNG): pulso desde la campana (derecha del asset) */
+  @keyframes victory-trumpet-bell {
+    0%,
+    100% {
+      transform: scale(1, 1);
+    }
+    38% {
+      transform: scale(1.14, 1.28);
+    }
+    55% {
+      transform: scale(1.06, 1.1);
+    }
+  }
+
+  .victory-trumpet-sprite-wrap {
+    transform-origin: 86% 48%;
+    animation: victory-trumpet-bell 0.52s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .victory-trumpet-sprite-wrap {
+      animation: none;
+    }
+  }
+
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(74,144,226,0.6)); }
+  50% { filter: drop-shadow(0 0 20px rgba(74,144,226,0.9)); }
+}
+
+.glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-gold {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(255,217,61,0.4)); }
+  50% { filter: drop-shadow(0 0 16px rgba(255,217,61,0.8)); }
+}
+
+.glow-pulse-gold {
+  animation: glow-pulse-gold 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-magic {
+  0%, 100% { box-shadow: 0 0 15px rgba(157,78,221,0.4), 0 8px 0 0 rgba(0,0,0,0.5); }
+  50% { box-shadow: 0 0 30px rgba(157,78,221,0.8), 0 8px 0 0 rgba(0,0,0,0.5); }
+}
+
+.glow-pulse-magic {
+  animation: glow-pulse-magic 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #FFD93D, #fff, #FFD93D);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.star-twinkle {
+  animation: star-twinkle 2s ease-in-out infinite;
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -30; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* Tables minigame */
+@keyframes tables-card-wiggle {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20% { transform: translateX(-6px) rotate(-4deg); }
+  40% { transform: translateX(6px) rotate(4deg); }
+  60% { transform: translateX(-4px) rotate(-2deg); }
+  80% { transform: translateX(4px) rotate(2deg); }
+}
+
+.tables-card-wiggle {
+  animation: tables-card-wiggle 0.42s ease-in-out 0.22s both;
+}
+
+@keyframes tables-fail-red-passion {
+  0% {
+    opacity: 1;
+    transform: scale(1.03);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35), 0 0 28px rgba(225, 29, 72, 0.75);
+  }
+  28% {
+    opacity: 1;
+    filter: brightness(1.12) saturate(1.25);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+    box-shadow: none;
+    filter: none;
+  }
+}
+
+.tables-fail-red-overlay {
+  background: linear-gradient(165deg, #fb7185 0%, #e11d48 45%, #be123c 100%);
+  animation: tables-fail-red-passion 0.58s ease-out forwards;
+}
+
+@keyframes tables-success-green-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45), 0 0 36px rgba(34, 197, 94, 0.95);
+  }
+  38% {
+    opacity: 1;
+    filter: brightness(1.08) saturate(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+.tables-success-green-overlay {
+  background: linear-gradient(165deg, #4ade80 0%, #22c55e 40%, #15803d 100%);
+  animation: tables-success-green-flash 0.42s ease-out forwards;
+}
+
+@keyframes tables-match-pop {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  18% {
+    transform: scale(1.08);
+    filter: brightness(1.15);
+  }
+  100% {
+    transform: scale(0.35);
+    opacity: 0;
+    filter: brightness(1);
+  }
+}
+
+.tables-match-pop {
+  animation: tables-match-pop 0.48s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s both;
+}
+
+@keyframes tables-tile-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.tables-tile-float {
+  animation: tables-tile-float 2.8s ease-in-out infinite;
+}
+
+.tables-tile-float:nth-child(2n) {
+  animation-delay: 0.2s;
+}
+
+.tables-tile-float:nth-child(3n) {
+  animation-delay: 0.35s;
+}
+
+.tables-row-glow {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 rgba(74, 144, 226, 0);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.tables-row-glow:hover {
+  border-color: rgba(157, 125, 255, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 18px rgba(157, 125, 255, 0.18);
+}
+
+@keyframes tables-star-pan {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(32px);
+  }
+}
+
+.tables-starfield-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0.42;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.5) 0 1px, transparent 2px),
+    radial-gradient(circle at 74% 16%, rgba(255, 217, 61, 0.38) 0 1px, transparent 2px),
+    radial-gradient(circle at 58% 65%, rgba(107, 181, 255, 0.42) 0 1px, transparent 2px),
+    radial-gradient(circle at 34% 82%, rgba(199, 125, 255, 0.4) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 54%, rgba(255, 255, 255, 0.35) 0 1px, transparent 2px);
+  animation: tables-star-pan 7.2s ease-in-out infinite alternate;
+}
+
+@keyframes tables-neon-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.35),
+      0 0 8px rgba(255, 255, 255, 0.2),
+      0 0 18px rgba(107, 181, 255, 0.24);
+  }
+  50% {
+    text-shadow:
+      0 2px 0 rgba(0, 0, 0, 0.35),
+      0 0 12px rgba(255, 255, 255, 0.34),
+      0 0 26px rgba(199, 125, 255, 0.34);
+  }
+}
+
+.tables-neon-number {
+  animation: tables-neon-pulse 2.1s ease-in-out infinite;
+}
+
+/* Botones flotantes mapa: batalla rápida + misión diaria (brillo + pulso para niños) */
+@keyframes map-fab-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes map-fab-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.22);
+  }
+}
+
+.map-fab-glow-red {
+  position: absolute;
+  inset: -18%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 140, 140, 0.75) 0%,
+    rgba(255, 107, 107, 0.35) 42%,
+    transparent 68%
+  );
+  animation: map-fab-glow-pulse 1.85s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+}
+
+.map-fab-glow-gold {
+  position: absolute;
+  inset: -20%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 236, 140, 0.9) 0%,
+    rgba(255, 217, 61, 0.45) 40%,
+    rgba(255, 180, 60, 0.15) 62%,
+    transparent 72%
+  );
+  animation: map-fab-glow-pulse 2s ease-in-out infinite 0.4s;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(2px);
+}
+
+.map-fab-btn-pulse {
+  position: relative;
+  z-index: 1;
+  animation: map-fab-bounce 1.65s ease-in-out infinite;
+}
+
+.map-fab-btn-pulse--delay {
+  animation-delay: 0.45s;
+}
+
+/* Android WebView stability mode:
+   desactiva efectos conocidos por provocar pantallazos blancos/cuadros intermitentes. */
+.android-webview [class*="backdrop-blur"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.android-webview [class*="blur-"] {
+  filter: none !important;
+}
+
+.android-webview [style*="filter: blur"] {
+  filter: none !important;
+}
+
+.android-webview [style*="backdrop-filter"] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}

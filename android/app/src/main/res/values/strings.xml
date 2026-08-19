@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Multihero</string>
+    <string name="title_activity_main">Multihero</string>
+    <string name="package_name">com.caimanint.multihero</string>
+    <string name="custom_url_scheme">com.caimanint.multihero</string>
+    <!-- Google AdMob App ID (Multihero producción). -->
+    <string name="admob_app_id">ca-app-pub-2361492899418716~4150600823</string>
+</resources>

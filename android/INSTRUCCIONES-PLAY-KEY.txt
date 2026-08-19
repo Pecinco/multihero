@@ -1,0 +1,48 @@
+FIRMA PARA "FIRMAR Y SUBIR UN APK" (VERIFICACIÓN EN PLAY CONSOLE)
+================================================================
+
+Google compara el certificado de tu APK con la huella que te muestran. Si
+no coinciden, error: "El APK subido tiene una firma diferente".
+
+1) Huella que debe dar tu clave (SHA-256) al verificar con keytool
+   (debe coincidir con la de la pantalla "Datos importantes"):
+
+   86:92:C5:85:03:1C:1B:62:ED:64:5C:26:21:3E:1B:F7:37:85:9B:16:E4:52:6B:46:8E:A5:97:23:4F:D8:4B:96
+
+2) Antes de compilar, comprueba qué clave usas. En una terminal (CMD o PowerShell):
+
+   keytool -list -v -keystore "C:\RUTA\A\tu\archivo.jks"
+
+   Mira la linea "SHA256:" y compárala con la de arriba. Deben ser iguales.
+
+3) Poner esa clave en el proyecto (elige UNA de estas vías):
+
+   A) Editar android\local.properties (no se sube a git) y añadir:
+
+   play.storeFile=C:/RUTA/A/tu/mismo-archivo.jks
+   play.storePassword=LA_CONTRASENA_DEL_KEYSTORE
+   play.keyPassword=CONTRASENA_DE_LA_CLAVE
+   play.keyAlias=EL_ALIAS_QUE_SALE_EN_KEYTOOL
+
+   (Usa barras / aun en Windows. Las contrasenas con caracteres raros,
+   probar a escapar o usar comilla en un editor seguro.)
+
+   B) O variables de entorno (PowerShell, antes de compilar):
+   $env:PLAY_UPLOAD_STORE_FILE="C:\RUTA\a\tu.jks"
+   $env:PLAY_UPLOAD_STORE_PASSWORD="..."
+   $env:PLAY_UPLOAD_KEY_PASSWORD="..."
+   $env:PLAY_UPLOAD_KEY_ALIAS="..."
+
+4) adi-registration.properties: debe contener SOLO el token (una linea) que
+   copias de la consola, en: android\app\src\main\assets\adi-registration.properties
+
+5) Generar el APK de release (firmado) desde la raiz del proyecto:
+
+   npm run android:release
+
+6) Sube a Play el multihero.apk o el de:
+   android\app\build\outputs\apk\release\app-release.apk
+
+NOTA: El keystore "upload.jks" generado en este repo por defecto NO coincide
+con la huella de Play. Necesitas el .jks / .keystore con el que se firmó
+antes esta app (o el que te indicó Google como clave de subida).

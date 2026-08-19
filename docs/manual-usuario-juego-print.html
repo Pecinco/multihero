@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual de usuario - Mates</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --primary-container: #6bb5ff;
+      --primary-dim: #3570b8;
+      --secondary: #e6a800;
+      --secondary-container: #ffd93d;
+      --secondary-dim: #b88600;
+      --tertiary: #ff6b6b;
+      --tertiary-dim: #d94545;
+      --magic: #9d4edd;
+      --magic-glow: #c77dff;
+      --success: #6bcb77;
+      --success-dim: #4da85a;
+      --background: #1e1e2f;
+      --surface: #252540;
+      --surface-container: #2a2a45;
+      --surface-container-low: #1a1a30;
+      --on-surface: #e8e8f0;
+      --on-surface-variant: #a0a0be;
+      --outline: #5a5a78;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Be Vietnam Pro", system-ui, sans-serif;
+      background: var(--background);
+      color: var(--on-surface);
+      line-height: 1.5;
+    }
+
+    .font-headline {
+      font-family: "Baloo 2", "Fredoka", system-ui, sans-serif;
+      font-weight: 800;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 20px;
+      background: linear-gradient(90deg, var(--background), var(--surface), var(--background));
+      border-bottom: 3px solid rgba(157, 78, 221, 0.35);
+      box-shadow: 0 10px 40px rgba(157, 78, 221, 0.15);
+    }
+    .app-title {
+      margin: 0;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--primary-container), var(--magic-glow), var(--secondary-container));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 20px rgba(74, 144, 226, 0.3);
+    }
+
+    .coin-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 217, 61, 0.12);
+      border: 1px solid rgba(255, 217, 61, 0.35);
+      box-shadow: 0 0 12px rgba(255, 217, 61, 0.12);
+    }
+    .coin-pill span {
+      color: var(--secondary-container);
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .maticoin {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .nav-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--surface-container-low);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .btn {
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      cursor: default;
+      color: #fff;
+      box-shadow: 0 6px 0 0 rgba(0, 0, 0, 0.35);
+    }
+    .btn--primary {
+      background: linear-gradient(180deg, #6bb5ff, #4a90e2);
+      border-color: rgba(107, 181, 255, 0.35);
+      box-shadow: 0 6px 0 0 #2a5090, 0 0 12px rgba(74, 144, 226, 0.25);
+    }
+    .btn--secondary {
+      background: linear-gradient(180deg, #ffe066, #ffd93d);
+      color: #3d2e00;
+      border-color: rgba(255, 245, 220, 0.35);
+      box-shadow: 0 6px 0 0 #b88600, 0 0 12px rgba(255, 217, 61, 0.25);
+    }
+    .btn--tertiary {
+      background: linear-gradient(180deg, #ff9e9e, #ff6b6b);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 6px 0 0 #a03030, 0 0 12px rgba(255, 107, 107, 0.2);
+    }
+    .btn--magic {
+      background: linear-gradient(180deg, #c77dff, #9d4edd);
+      border-color: rgba(199, 125, 255, 0.35);
+      box-shadow: 0 6px 0 0 #5a1f8a, 0 0 12px rgba(157, 78, 221, 0.35);
+    }
+    .btn--success {
+      background: linear-gradient(180deg, #6bcb77, #4da85a);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 6px 0 0 #3a8a45, 0 0 12px rgba(107, 203, 119, 0.25);
+    }
+
+    .page {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 20px 64px;
+    }
+
+    .hero-card {
+      border-radius: 24px;
+      padding: 28px;
+      background: linear-gradient(145deg, var(--surface-container), #222238);
+      border: 2px solid rgba(107, 181, 255, 0.2);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: linear-gradient(90deg, var(--magic), var(--primary));
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .hero-card h1 {
+      margin: 0 0 12px;
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.75rem, 4vw, 2.35rem);
+      line-height: 1.15;
+      color: #fff;
+    }
+    .hero-card .lead {
+      margin: 0;
+      color: var(--on-surface-variant);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    h2 {
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      margin: 36px 0 14px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border-left: 4px solid var(--secondary-container);
+      padding-left: 12px;
+    }
+    h3 {
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin: 20px 0 8px;
+      color: var(--primary-container);
+    }
+
+    p, li {
+      color: var(--on-surface-variant);
+      font-weight: 500;
+    }
+    strong { color: var(--on-surface); }
+
+    .steps {
+      margin: 0;
+      padding-left: 1.15rem;
+    }
+    .steps li {
+      margin-bottom: 8px;
+    }
+
+    .mini-card {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #2a2a45, #1a1a30);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+    .mini-card h3 {
+      margin-top: 0;
+      color: var(--secondary-container);
+    }
+
+    .tip {
+      margin: 14px 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border-left: 4px solid var(--secondary-container);
+      background: rgba(255, 217, 61, 0.08);
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .capture {
+      margin-top: 12px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px dashed rgba(90, 90, 120, 0.8);
+      background: var(--surface-container-low);
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .capture img {
+      width: 100%;
+      height: auto;
+      display: block;
+      vertical-align: middle;
+    }
+
+    .battle-answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      max-width: 280px;
+      margin: 16px 0;
+    }
+    .battle-answer {
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .battle-answer:nth-child(1) { background: linear-gradient(180deg, #6bb5ff, #4a90e2); box-shadow: 0 5px 0 0 #2a5090; }
+    .battle-answer:nth-child(2) { background: linear-gradient(180deg, #ffe066, #ffd93d); color: #3d2e00; box-shadow: 0 5px 0 0 #b88600; }
+    .battle-answer:nth-child(3) { background: linear-gradient(180deg, #ff9e9e, #ff6b6b); box-shadow: 0 5px 0 0 #a03030; }
+    .battle-answer:nth-child(4) { background: linear-gradient(180deg, #c77dff, #9d4edd); box-shadow: 0 5px 0 0 #5a1f8a; }
+
+    @media print {
+      body { background: #fff; color: #1a1a30; }
+      .app-header, .nav-demo { background: #f4f4f8; border-color: #ddd; }
+      .app-title { -webkit-text-fill-color: #1a1a30; color: #1a1a30; }
+      p, li, .lead { color: #444; }
+      .hero-card, .mini-card { border-color: #ddd; background: #fff; box-shadow: none; }
+      h2, h3, .hero-card h1 { color: #1a1a30; }
+      .btn { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <p class="app-title font-headline">Manual de usuario</p>
+    <div class="coin-pill" title="MatiCoins en el juego">
+      <svg class="maticoin" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <linearGradient id="mGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFE066" />
+            <stop offset="50%" stop-color="#FFD93D" />
+            <stop offset="100%" stop-color="#E6A800" />
+          </linearGradient>
+          <linearGradient id="mGoldInner" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#E6A800" />
+            <stop offset="100%" stop-color="#FFE066" />
+          </linearGradient>
+          <filter id="mRelief">
+            <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#FFD93D" flood-opacity="0.5" />
+          </filter>
+        </defs>
+        <circle cx="50" cy="50" r="45" fill="url(#mGoldGrad)" filter="url(#mRelief)" />
+        <circle cx="50" cy="50" r="35" fill="url(#mGoldInner)" />
+        <path d="M 30 65 L 30 35 L 50 55 L 70 35 L 70 65" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>MatiCoins</span>
+    </div>
+  </header>
+
+  <div class="nav-demo" aria-hidden="true">
+    <span class="btn btn--primary">Mapa</span>
+    <span class="btn btn--tertiary">Batalla</span>
+    <span class="btn btn--secondary">Misión diaria</span>
+    <span class="btn btn--magic">Tienda</span>
+    <span class="btn btn--success">Inventario</span>
+    <span class="btn btn--primary">Runner</span>
+    <span class="btn btn--magic">Tablas</span>
+    <span class="btn btn--tertiary">Multijugador</span>
+  </div>
+
+  <main class="page">
+    <section class="hero-card">
+      <span class="hero-badge">Guía para jugadores</span>
+      <h1 class="font-headline">Mates — cómo jugar y ganar</h1>
+      <p class="lead">
+        Manual pensado para leer sin prisa: qué es cada pantalla, cómo funciona cada minijuego paso a paso,
+        para qué sirven los <strong>MatiCoins</strong> y cómo te ayudan los héroes y los objetos de la tienda.
+      </p>
+      <div class="capture">
+        <img src="./capturas/01-mapa.png" alt="Captura: pantalla del mapa" width="880" height="495" />
+      </div>
+    </section>
+
+    <h2 class="font-headline">1. Cómo funciona el juego (en una frase)</h2>
+    <p>
+      Resuelves <strong>multiplicaciones</strong>. Si aciertas, avanzas o ganas recompensas; si fallas o se acaba el tiempo,
+      en muchos modos pierdes vidas o la partida. Con lo que ganas compras equipo en la <strong>tienda</strong> y lo activas en el <strong>inventario</strong>.
+    </p>
+    <div class="tip">
+      En la barra superior del juego verás tus <strong>MatiCoins</strong> con la moneda dorada (como la de arriba a la derecha en este manual).
+    </div>
+
+    <h2 class="font-headline">2. Minijuegos uno por uno (modo para dummies)</h2>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Batalla en el mapa (historia)</h3>
+      <p><strong>Qué es:</strong> un duelo de multiplicaciones contra un monstruo. Tú tienes vida y el monstruo también.</p>
+      <p><strong>Qué ves:</strong> la operación (por ejemplo <code>6 × 7 = ?</code>), cuatro botones con números (colores azul, amarillo, rojo y morado, como en el juego) y una barra de tiempo.</p>
+      <div class="battle-answers" aria-hidden="true">
+        <span class="battle-answer">42</span>
+        <span class="battle-answer">36</span>
+        <span class="battle-answer">48</span>
+        <span class="battle-answer">54</span>
+      </div>
+      <ol class="steps">
+        <li>Lee la multiplicación.</li>
+        <li>Pulsa el número que creas correcto.</li>
+        <li>Si aciertas, el monstruo pierde vida. Si encadenas aciertos seguidos, haces más daño (combo).</li>
+        <li>Si fallas o el tiempo llega a cero sin haber respondido bien, tú pierdes vida.</li>
+        <li>Cuando la vida del monstruo llega a cero, <strong>has ganado</strong> esa batalla del mapa.</li>
+        <li>Si tu vida llega a cero, pierdes y vuelves al mapa para intentarlo otra vez.</li>
+      </ol>
+      <p><strong>Objetivo:</strong> ganar para subir de nivel en la aventura y conseguir estrellas según la dificultad que hayas elegido.</p>
+      <div class="capture"><img src="./capturas/02-batalla.png" alt="Captura: batalla con operación y botones" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Batalla rápida</h3>
+      <p><strong>Qué es:</strong> la misma idea que la batalla del mapa, pero <strong>no avanza el mapa</strong>. Sirve para practicar o farmear monedas con una recompensa fija.</p>
+      <ol class="steps">
+        <li>Entras a batalla rápida desde el menú (según cómo esté colocado en tu versión).</li>
+        <li>Juegas igual: operación + cuatro respuestas + tiempo.</li>
+        <li>Si ganas, cobras la recompensa de batalla rápida.</li>
+      </ol>
+      <div class="capture"><img src="./capturas/03-batalla-rapida.png" alt="Captura: batalla rápida" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Runner clásico (bonus en el mapa)</h3>
+      <p><strong>Qué es:</strong> una carrera. Arriba sale la multiplicación y abajo hay <strong>tres “puertas”</strong> con números. El monstruo avanza en su carril si tardas demasiado.</p>
+      <ol class="steps">
+        <li>Mira la operación.</li>
+        <li>Pulsa la puerta que lleve el <strong>resultado correcto</strong>.</li>
+        <li>Cada acierto te acerca a la meta (cuenta cuántos llevas).</li>
+        <li>Si eliges mal, normalmente <strong>se acaba la partida</strong> de ese intento.</li>
+        <li>Cuando completas todos los aciertos que pide el modo, ganas y cobras recompensa.</li>
+      </ol>
+      <p><strong>Objetivo:</strong> llegar a la meta sin equivocarte; en el mapa suele ser un nodo bonus con cohete.</p>
+      <div class="capture"><img src="./capturas/04-runner.png" alt="Captura: runner con puertas" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Math Hero (bonus 3D)</h3>
+      <p><strong>Qué es:</strong> un minijuego en 3D: corres por un camino con <strong>cuatro carriles</strong>. En cada “ola” hay números en los carriles; uno es la respuesta buena.</p>
+      <ol class="steps">
+        <li>Al empezar, a veces eliges personaje (solo afecta a la apariencia del corredor).</li>
+        <li>Te mueves a izquierda o derecha para colocarte en el carril del número correcto antes de cruzar la línea.</li>
+        <li>Puedes saltar para esquivar obstáculos en el suelo.</li>
+        <li>Tienes <strong>tiempo</strong> y <strong>vidas</strong>: un fallo te quita vida; el tiempo también baja.</li>
+        <li>Cada acierto suma monedas “en pantalla” y te acerca a la meta larga del modo.</li>
+        <li>Al terminar (por meta, por tiempo o por vidas), ves el resumen; si has ganado monedas, se suman a tus MatiCoins.</li>
+      </ol>
+      <p><strong>Objetivo:</strong> acertar el máximo posible, llegar a la meta si puedes y superar tu mejor marca en esa pista.</p>
+      <div class="capture"><img src="./capturas/05-math-hero.png" alt="Captura: Math Hero en juego" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Tablas (memoria / parejas)</h3>
+      <p><strong>Qué es:</strong> una pantalla llena de tarjetas. Cada tabla del 1 al 10 tiene operaciones del tipo <code>tabla × número</code> y tarjetas con el <strong>resultado</strong>.</p>
+      <ol class="steps">
+        <li>Eliges qué tabla quieres practicar (1, 2, … 10).</li>
+        <li>Ves cuántos MatiCoins te daría ganar esa tabla (el premio puede cambiar según cómo vayas en el juego).</li>
+        <li>Emparejas <strong>una operación</strong> con <strong>su resultado</strong> (tocando dos cartas o arrastrando una sobre otra, según dispositivo).</li>
+        <li>Si las dos no van juntas, se marcan un momento como error y puedes intentar otra pareja.</li>
+        <li>Cuando todas las parejas están hechas, ganas y cobras el premio de esa tabla.</li>
+      </ol>
+      <p><strong>Objetivo:</strong> memorizar la tabla que más te cuesta y ganar monedas extra.</p>
+      <div class="capture"><img src="./capturas/06-tablas.png" alt="Captura: minijuego tablas" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Misión diaria (subida por plataformas)</h3>
+      <p><strong>Qué es:</strong> un minijuego de plataformas: saltas, te mueves y en ciertos escalones debes caer en la plataforma que muestra el <strong>resultado correcto</strong> de la multiplicación.</p>
+      <ol class="steps">
+        <li>Desde el mapa o el menú entras al <strong>hub de misión diaria</strong> (calendario de la semana con monedas por día).</li>
+        <li>Pulsas jugar el día de hoy: empieza la subida.</li>
+        <li>Usa los controles de moverte y saltar (igual que en el juego en tu móvil o teclado).</li>
+        <li>En cada “pregunta” solo una plataforma buena: cae encima de la correcta.</li>
+        <li>Si caes en la incorrecta o te caes del mapa, la partida se reinicia desde el principio de la subida.</li>
+        <li>Cuando completas todas las rondas del ascenso, se cuenta como misión superada y entra en juego el premio del día (y a veces la opción de doblar con anuncio o reto).</li>
+      </ol>
+      <p><strong>Objetivo:</strong> completar la misión del día para la racha semanal de premios y monedas extra.</p>
+      <div class="capture"><img src="./capturas/07-mision-diaria-hub.png" alt="Captura: hub misión diaria con calendario" width="880" height="495" /></div>
+      <div class="capture"><img src="./capturas/08-mision-diaria-juego.png" alt="Captura: plataformas misión diaria" width="880" height="495" /></div>
+    </article>
+
+    <article class="mini-card">
+      <h3 class="font-headline">Multijugador (contra un amigo)</h3>
+      <p><strong>Qué es:</strong> partidas en línea contra otra persona. Hay varios modos; todos se basan en responder multiplicaciones bien y rápido.</p>
+      <ul class="steps">
+        <li><strong>Duelo:</strong> os quitáis vida con aciertos; quien llegue a cero pierde.</li>
+        <li><strong>Carrera (sprint):</strong> quien llega antes al marcador objetivo gana; un fallo puede restarte puntos.</li>
+        <li><strong>Cuerda:</strong> cada acierto “tira” de un marcador hacia tu lado; quien consiga llevarlo del todo a su lado gana.</li>
+      </ul>
+      <p><strong>Objetivo:</strong> competir y practicar con ritmo real contra otra persona.</p>
+      <div class="capture"><img src="./capturas/09-multijugador.png" alt="Captura: multijugador o elección de modo" width="880" height="495" /></div>
+    </article>
+
+    <h2 class="font-headline">3. MatiCoins extra (resumen)</h2>
+    <ul class="steps">
+      <li>Gana batallas del mapa, runner, math hero y tablas.</li>
+      <li>Completa la <strong>misión diaria</strong> varios días seguidos en la misma semana para que el premio base suba.</li>
+      <li>Usa el botón de <strong>bonus</strong> en el hub de misión o en tienda (hasta varias veces al día según reglas del juego).</li>
+      <li>Algunos objetos del inventario aumentan el porcentaje de monedas al ganar.</li>
+      <li>Vincular cuenta en perfil puede dar un bono grande de una sola vez.</li>
+    </ul>
+
+    <h2 class="font-headline">4. Héroes e ítems (muy resumido)</h2>
+    <div class="grid-2">
+      <div class="mini-card">
+        <h3 class="font-headline">Héroes</h3>
+        <p>Cada héroe se desbloquea al subir de nivel en el mapa. Los de más nivel suelen tener más daño y más vida base en batalla.</p>
+        <p><strong>Ventaja:</strong> más fuertes sin comprar nada. <strong>Inconveniente:</strong> hay que desbloquearlos jugando.</p>
+      </div>
+      <div class="mini-card">
+        <h3 class="font-headline">Objetos de tienda</h3>
+        <p>Casco, armadura y bolígrafo cambian defensa y ataque. Pociones e hierbas son consumibles en combate. Las mascotas dan pasivas (menos daño recibido, más daño, ayudas especiales…).</p>
+        <p><strong>Ventaja:</strong> adaptas tu estilo (tanque o glass cannon). <strong>Inconveniente:</strong> cuestan MatiCoins y los consumibles se agotan.</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="capture"><img src="./capturas/10-tienda.png" alt="Captura: tienda" width="880" height="495" /></div>
+      <div class="capture"><img src="./capturas/11-inventario.png" alt="Captura: inventario" width="880" height="495" /></div>
+    </div>
+  </main>
+</body>
+</html>

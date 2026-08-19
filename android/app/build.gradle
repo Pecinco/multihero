@@ -1,0 +1,135 @@
+apply plugin: 'com.android.application'
+
+// Prioridad: variables de entorno > local.properties (play.*) > keystore.properties
+// Ver android/INSTRUCCIONES-PLAY-KEY.txt
+
+def keystoreProperties = new Properties()
+def kf = rootProject.file("keystore.properties")
+if (kf.exists()) {
+    kf.withInputStream { keystoreProperties.load(it) }
+}
+def localPlayProps = new Properties()
+def lf = rootProject.file("local.properties")
+if (lf.exists()) {
+    lf.withInputStream { localPlayProps.load(it) }
+}
+
+def storePath = (System.getenv("PLAY_UPLOAD_STORE_FILE")
+        ?: localPlayProps.getProperty("play.storeFile")
+        ?: keystoreProperties.getProperty("storeFile") ?: "").trim()
+def storeFileRes = null
+if (storePath) {
+    def f = new File(storePath)
+    storeFileRes = f.isAbsolute() ? f : rootProject.file(storePath)
+}
+
+def storePasswordRes = (System.getenv("PLAY_UPLOAD_STORE_PASSWORD")
+        ?: localPlayProps.getProperty("play.storePassword")
+        ?: keystoreProperties.getProperty("storePassword") ?: "")
+def keyPasswordRes = (System.getenv("PLAY_UPLOAD_KEY_PASSWORD")
+        ?: localPlayProps.getProperty("playKeyPassword")
+        ?: localPlayProps.getProperty("play.keyPassword")
+        ?: keystoreProperties.getProperty("keyPassword") ?: "")
+def keyAliasRes = (System.getenv("PLAY_UPLOAD_KEY_ALIAS")
+        ?: localPlayProps.getProperty("playKeyAlias")
+        ?: localPlayProps.getProperty("play.keyAlias")
+        ?: keystoreProperties.getProperty("keyAlias") ?: "")
+// admite play.keyPassword por si alguien copia con punto
+if (!keyPasswordRes) {
+    keyPasswordRes = (localPlayProps.getProperty("play.keyPassword") ?: "")
+}
+if (!keyAliasRes) {
+    keyAliasRes = (localPlayProps.getProperty("play.keyAlias") ?: "")
+}
+// alias y contras clave: fallback local sin prefijo
+if (!keyPasswordRes) keyPasswordRes = (localPlayProps.getProperty("keyPassword") ?: "")
+if (!keyAliasRes) keyAliasRes = (localPlayProps.getProperty("keyAlias") ?: "")
+
+def canSignRelease = storeFileRes != null && storeFileRes.exists() \
+        && keyAliasRes && storePasswordRes && keyPasswordRes
+
+if (!canSignRelease) {
+    logger.lifecycle("--- Android release: faltan datos de firma. Lee android/INSTRUCCIONES-PLAY-KEY.txt" +
+        " o define keystore/local.properties. assembleRelease fallará si hace falta firmar. ---")
+} else {
+    def showPath = System.getenv("PLAY_UPLOAD_STORE_FILE") || localPlayProps.getProperty("play.storeFile")
+    if (showPath) {
+        logger.lifecycle("--- Android release: usando keystore (Play / override) ---")
+    }
+}
+
+android {
+    namespace = "com.caimanint.multihero"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.caimanint.multihero"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 3
+        versionName "1.0.2"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    signingConfigs {
+        release {
+            if (canSignRelease) {
+                keyAlias keyAliasRes
+                keyPassword keyPasswordRes
+                storeFile storeFileRes
+                storePassword storePasswordRes
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (canSignRelease) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+if (!canSignRelease) {
+    gradle.taskGraph.whenReady { g ->
+        def willAssembleRelease = g.allTasks.any { it.name == "assembleRelease" }
+        if (willAssembleRelease) {
+            throw new GradleException("No se puede firmar release. Añade android/keystore.properties" +
+                ", o play.* en local.properties, o variables PLAY_UPLOAD_*. Ver android/INSTRUCCIONES-PLAY-KEY.txt")
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

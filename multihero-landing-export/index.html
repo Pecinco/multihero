@@ -1,0 +1,2615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0a0a18" />
+    <meta
+      name="description"
+      content="Multihero: multiplications, battles, 3D races and daily mission. Caiman Interactive."
+    />
+    <title>Multihero — The adventure that gets you hooked on maths</title>
+    <link rel="icon" type="image/png" href="./assets/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* =============  RESET / BASE  ============= */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: 'Fredoka', 'Baloo 2', system-ui, sans-serif;
+        background: #06060f;
+        color: #f2f2ff;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      :root {
+        --c-primary: #4a90e2;
+        --c-primary-bright: #6bb5ff;
+        --c-gold: #ffd93d;
+        --c-gold-dim: #e6a800;
+        --c-coral: #ff6b6b;
+        --c-magic: #c77dff;
+        --c-magic-dim: #9d4edd;
+        --c-green: #6bcb77;
+        --c-bg: #06060f;
+        --c-surface: #15152a;
+        --c-surface-2: #1c1c36;
+      }
+
+      /* =============  LAYERED SKY  ============= */
+      .sky {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        background:
+          radial-gradient(ellipse 120% 70% at 50% 0%, rgba(74, 144, 226, 0.28), transparent 60%),
+          radial-gradient(ellipse 80% 60% at 80% 80%, rgba(199, 125, 255, 0.22), transparent 65%),
+          radial-gradient(ellipse 60% 45% at 15% 65%, rgba(255, 107, 107, 0.18), transparent 60%),
+          linear-gradient(180deg, #05050e 0%, #0a0a1a 60%, #04040c 100%);
+      }
+      .sky .stars,
+      .sky .stars-2 {
+        position: absolute;
+        inset: -10%;
+        background-repeat: repeat;
+        opacity: 0.9;
+      }
+      .sky .stars {
+        background-image:
+          radial-gradient(2px 2px at 23px 30px, #fff, transparent),
+          radial-gradient(1px 1px at 90px 40px, #cfe2ff, transparent),
+          radial-gradient(1.5px 1.5px at 160px 90px, #fff, transparent),
+          radial-gradient(1px 1px at 210px 160px, #ffe9b0, transparent),
+          radial-gradient(2px 2px at 320px 220px, #fff, transparent),
+          radial-gradient(1px 1px at 430px 60px, #d8c0ff, transparent),
+          radial-gradient(1.5px 1.5px at 520px 300px, #fff, transparent),
+          radial-gradient(1px 1px at 610px 180px, #b4d6ff, transparent);
+        background-size: 680px 360px;
+        animation: starDrift 140s linear infinite;
+      }
+      .sky .stars-2 {
+        opacity: 0.55;
+        animation: starDrift 220s linear infinite reverse;
+        background-image:
+          radial-gradient(1px 1px at 50px 110px, #fff, transparent),
+          radial-gradient(1.5px 1.5px at 180px 50px, #c9e4ff, transparent),
+          radial-gradient(1px 1px at 300px 260px, #fff, transparent),
+          radial-gradient(2px 2px at 460px 140px, #ffd9b0, transparent),
+          radial-gradient(1px 1px at 560px 80px, #fff, transparent);
+        background-size: 640px 320px;
+      }
+      @keyframes starDrift {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-360px);
+        }
+      }
+
+      /* Nebulae blobs */
+      .nebula {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .nebula span {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(110px);
+        opacity: 0.5;
+        mix-blend-mode: screen;
+        animation: nebulaDrift 22s ease-in-out infinite;
+      }
+      .nebula span:nth-child(1) {
+        width: 560px;
+        height: 560px;
+        background: radial-gradient(circle at 30% 30%, var(--c-primary), transparent 60%);
+        top: -180px;
+        left: -120px;
+      }
+      .nebula span:nth-child(2) {
+        width: 520px;
+        height: 520px;
+        background: radial-gradient(circle at 60% 50%, var(--c-magic-dim), transparent 65%);
+        bottom: -160px;
+        right: -140px;
+        animation-delay: -7s;
+      }
+      .nebula span:nth-child(3) {
+        width: 380px;
+        height: 380px;
+        background: radial-gradient(circle at 50% 50%, var(--c-coral), transparent 65%);
+        top: 45%;
+        left: 35%;
+        animation-delay: -13s;
+      }
+      @keyframes nebulaDrift {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(40px, -30px) scale(1.06); }
+        66% { transform: translate(-30px, 20px) scale(0.96); }
+      }
+
+      /* Monster bestiary background */
+      .monster-bg {
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .monster-bg .layer {
+        position: absolute;
+        inset: -10%;
+        background-size: min(70vmin, 780px);
+        background-position: 85% 50%;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transition: opacity 1.6s ease-in-out, transform 6s ease-in-out;
+        filter: blur(1.5px) saturate(1.2) brightness(0.38) drop-shadow(0 0 60px rgba(107, 181, 255, 0.25));
+        transform: scale(1.05);
+      }
+      .monster-bg .layer.is-on {
+        opacity: 1;
+        transform: scale(1.12);
+      }
+      .monster-bg .vignette {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 65% 55% at 50% 45%, transparent 0%, rgba(6, 6, 15, 0.9) 80%);
+      }
+
+      /* Grain */
+      .noise {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.035;
+        z-index: 6;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+
+      /* =============  LAYOUT  ============= */
+      .wrap {
+        position: relative;
+        z-index: 10;
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 clamp(1rem, 3vw, 1.5rem) 4rem;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem 0 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .brand img {
+        height: 44px;
+        width: auto;
+        filter: drop-shadow(0 0 18px rgba(107, 181, 255, 0.45));
+      }
+      .brand span {
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        font-weight: 700;
+        color: var(--c-gold);
+        text-transform: uppercase;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .top-nav {
+        display: flex;
+        gap: 0.35rem;
+        padding: 0.3rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .top-nav a {
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #c9c9e8;
+        text-decoration: none;
+        padding: 0.5rem 0.9rem;
+        border-radius: 999px;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .top-nav a:hover {
+        background: rgba(107, 181, 255, 0.18);
+        color: #fff;
+      }
+      @media (max-width: 720px) {
+        .top-nav { display: none; }
+      }
+
+      /* Language switcher */
+      .lang-switcher { position: relative; }
+      .lang-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        color: #dfe8ff;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        padding: 0.55rem 0.9rem;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      }
+      .lang-btn:hover {
+        background: rgba(107, 181, 255, 0.18);
+        border-color: rgba(107, 181, 255, 0.45);
+        transform: translateY(-1px);
+      }
+      .lang-btn svg { width: 16px; height: 16px; }
+      .lang-btn .caret { font-size: 0.65rem; opacity: 0.7; }
+      .lang-menu {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 0.5rem);
+        min-width: 210px;
+        margin: 0;
+        padding: 0.35rem;
+        list-style: none;
+        background: linear-gradient(160deg, rgba(28, 28, 54, 0.98), rgba(12, 12, 24, 0.98));
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.9rem;
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        z-index: 60;
+      }
+      .lang-menu[hidden] { display: none; }
+      .lang-menu li {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.55rem 0.6rem;
+        border-radius: 0.55rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #d4d4f2;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .lang-menu li:hover {
+        background: rgba(107, 181, 255, 0.16);
+        color: #fff;
+      }
+      .lang-menu li.is-active {
+        background: rgba(255, 217, 61, 0.14);
+        color: var(--c-gold);
+      }
+      .lang-menu li .code {
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        min-width: 28px;
+        text-align: center;
+        padding: 0.18rem 0.35rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #9ccfff;
+      }
+      .lang-menu li.is-active .code {
+        background: rgba(255, 217, 61, 0.25);
+        color: var(--c-gold);
+      }
+
+      /* =============  HERO  ============= */
+      .hero {
+        position: relative;
+        text-align: center;
+        padding: 2.5rem 0 3.25rem;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #c9d8ff;
+        margin-bottom: 1.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        background: rgba(107, 181, 255, 0.08);
+        border: 1px solid rgba(107, 181, 255, 0.25);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .eyebrow .pulse-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #6bb5ff, #4a90e2);
+        box-shadow: 0 0 14px rgba(107, 181, 255, 0.9);
+        animation: pulse-dot 1.4s ease-in-out infinite;
+      }
+      @keyframes pulse-dot {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.7; }
+      }
+
+      h1.kinetic {
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: clamp(2.6rem, 9vw, 5rem);
+        line-height: 0.95;
+        margin: 0 0 1.15rem;
+        letter-spacing: -0.025em;
+      }
+      h1.kinetic .line { display: block; }
+      h1.kinetic .word {
+        display: inline-block;
+        position: relative;
+        background: linear-gradient(120deg, #fff 0%, #c9e4ff 30%, #6bb5ff 50%, #ffd93d 75%, #c77dff 100%);
+        background-size: 240% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shine 6s linear infinite;
+      }
+      h1.kinetic .accent {
+        background: linear-gradient(120deg, #ffe566 0%, #ff9e9e 50%, #c77dff 100%);
+        background-size: 220% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: shine 6s linear infinite;
+      }
+      h1.kinetic::after {
+        content: '';
+        display: block;
+        width: clamp(100px, 22vw, 180px);
+        height: 6px;
+        margin: 1.2rem auto 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, var(--c-gold), var(--c-magic), transparent);
+        filter: blur(0.5px) drop-shadow(0 0 14px rgba(255, 217, 61, 0.7));
+        animation: barGlow 3s ease-in-out infinite;
+      }
+      @keyframes shine {
+        to { background-position: 240% center; }
+      }
+      @keyframes barGlow {
+        0%, 100% { opacity: 0.6; transform: scaleX(0.85); }
+        50% { opacity: 1; transform: scaleX(1); }
+      }
+
+      .lede {
+        font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+        font-weight: 500;
+        color: #c8c8e8;
+        max-width: 36rem;
+        margin: 0 auto 2rem;
+        line-height: 1.5;
+      }
+      .lede strong { color: #fff; font-weight: 700; }
+
+      /* Floating hero portraits */
+      .hero-floats {
+        position: relative;
+        height: clamp(260px, 40vw, 380px);
+        margin: 0 auto 1.25rem;
+        max-width: 920px;
+        pointer-events: none;
+      }
+      .hero-floats .float {
+        position: absolute;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55), 0 0 0 2px rgba(255, 255, 255, 0.08);
+        transform-origin: center;
+      }
+      .hero-floats .float::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(6, 6, 15, 0.75) 100%);
+      }
+      .hero-floats .float img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .hero-floats .float.f-1 {
+        width: clamp(130px, 22vw, 210px);
+        aspect-ratio: 3 / 4;
+        top: 5%;
+        left: 4%;
+        transform: rotate(-7deg);
+        animation: floatA 7s ease-in-out infinite;
+      }
+      .hero-floats .float.f-2 {
+        width: clamp(160px, 26vw, 240px);
+        aspect-ratio: 1;
+        top: 12%;
+        left: 50%;
+        transform: translateX(-50%) rotate(2deg);
+        animation: floatB 8s ease-in-out infinite;
+        z-index: 2;
+        box-shadow:
+          0 30px 70px rgba(74, 144, 226, 0.35),
+          0 0 0 3px rgba(255, 217, 61, 0.5),
+          0 0 40px rgba(255, 217, 61, 0.35);
+      }
+      .hero-floats .float.f-3 {
+        width: clamp(130px, 22vw, 210px);
+        aspect-ratio: 3 / 4;
+        top: 8%;
+        right: 4%;
+        transform: rotate(8deg);
+        animation: floatA 9s ease-in-out infinite reverse;
+      }
+      @keyframes floatA {
+        0%, 100% { translate: 0 0; }
+        50% { translate: 0 -14px; }
+      }
+      @keyframes floatB {
+        0%, 100% { translate: -50% 0; }
+        50% { translate: -50% -20px; }
+      }
+
+      /* CTA */
+      .cta-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.9rem;
+      }
+      .cta-row .btn-duo {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn-play {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: clamp(1.15rem, 3.2vw, 1.55rem);
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        color: #1a2040;
+        padding: 1.05rem 2.5rem 1.1rem;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(180deg, #fff1a3 0%, var(--c-gold) 40%, var(--c-gold-dim) 100%);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.7),
+          0 0 0 3px rgba(255, 255, 255, 0.2),
+          0 10px 0 #8a6500,
+          0 22px 50px rgba(0, 0, 0, 0.55);
+        transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.15s ease;
+        isolation: isolate;
+      }
+      .btn-play::before {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: inherit;
+        background: conic-gradient(from 0deg, var(--c-gold), var(--c-magic), var(--c-primary-bright), var(--c-coral), var(--c-gold));
+        z-index: -2;
+        opacity: 0.55;
+        filter: blur(14px);
+        animation: halo 3s linear infinite;
+      }
+      .btn-play::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), transparent 40%);
+        pointer-events: none;
+      }
+      @keyframes halo { to { transform: rotate(360deg); } }
+      .btn-play:hover {
+        filter: brightness(1.08);
+        transform: translateY(-2px) scale(1.02);
+      }
+      .btn-play:active {
+        transform: translateY(6px) scale(0.99);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.6),
+          0 0 0 2px rgba(255, 255, 255, 0.18),
+          0 4px 0 #8a6500,
+          0 12px 30px rgba(0, 0, 0, 0.45);
+      }
+      .btn-play .arrow {
+        font-size: 1.35em;
+        line-height: 1;
+        transition: transform 0.2s ease;
+      }
+      .btn-play:hover .arrow { transform: translateX(4px); }
+
+      .btn-ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: 'Baloo 2', cursive;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #c9e4ff;
+        text-decoration: none;
+        padding: 0.65rem 1.2rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(107, 181, 255, 0.35);
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      }
+      .btn-ghost:hover {
+        background: rgba(107, 181, 255, 0.14);
+        color: #fff;
+        transform: translateY(-1px);
+      }
+
+      .cta-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: #9595b8;
+        margin-top: 0.25rem;
+      }
+      .cta-meta strong { color: #fff; font-weight: 700; }
+
+      .spark {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        pointer-events: none;
+        z-index: 999;
+        border-radius: 50%;
+        background: radial-gradient(circle, #ffe566, transparent 70%);
+        filter: drop-shadow(0 0 6px #ffd93d);
+        animation: sparkPop 700ms ease-out forwards;
+      }
+      @keyframes sparkPop {
+        from { transform: translate(0, 0) scale(1); opacity: 1; }
+        to { transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.2); opacity: 0; }
+      }
+
+      /* =============  SECTION HEADERS  ============= */
+      .section { margin-bottom: clamp(2.25rem, 5vw, 3.5rem); }
+      .section-head { text-align: center; margin-bottom: 1.75rem; }
+      .kicker-tag {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--c-gold);
+        padding: 0.3rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 217, 61, 0.35);
+        background: rgba(255, 217, 61, 0.08);
+        margin-bottom: 0.7rem;
+      }
+      .section-title {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(1.75rem, 4.3vw, 2.55rem);
+        font-weight: 800;
+        margin: 0 0 0.35rem;
+        color: #fff;
+        letter-spacing: -0.01em;
+      }
+      .section-sub {
+        color: #a2a2c6;
+        font-size: 1rem;
+        font-weight: 500;
+        margin: 0 auto;
+        max-width: 34rem;
+        line-height: 1.5;
+      }
+
+      /* Minijuegos */
+      .minigame-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+        gap: clamp(0.85rem, 2vw, 1.15rem);
+      }
+      .shot-card {
+        position: relative;
+        border-radius: 1.4rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        min-height: 260px;
+        background: #0f0f1f;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+        transform-style: preserve-3d;
+        transition: transform 300ms cubic-bezier(0.2, 0.9, 0.3, 1.1), box-shadow 0.25s ease, border-color 0.25s ease;
+        will-change: transform;
+      }
+      .shot-card:hover {
+        border-color: rgba(107, 181, 255, 0.5);
+        box-shadow: 0 30px 70px rgba(74, 144, 226, 0.25);
+      }
+      .shot-card .shot-bg {
+        position: absolute;
+        inset: -6%;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.6s ease;
+        transform: scale(1.02);
+      }
+      .shot-card:hover .shot-bg { transform: scale(1.1); }
+      .shot-card .shot-scrim {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 70% 50% at 50% 0%, rgba(6, 6, 15, 0.25), transparent 60%),
+          linear-gradient(180deg, rgba(6, 6, 15, 0.15) 0%, rgba(6, 6, 18, 0.75) 55%, rgba(6, 6, 18, 0.95) 100%);
+      }
+      .shot-card .corner {
+        position: absolute;
+        top: 0.85rem;
+        left: 0.85rem;
+        right: 0.85rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        z-index: 3;
+      }
+      .shot-card .shot-number {
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.25em;
+      }
+      .shot-card .shot-tag {
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #d4d4f2;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .shot-card .shot-badge-wrap {
+        position: absolute;
+        top: 2.6rem;
+        left: 0.85rem;
+        right: 2rem;
+        z-index: 3;
+      }
+      .shot-badge {
+        display: inline-block;
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: clamp(1.45rem, 4.2vw, 1.95rem);
+        line-height: 0.95;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: #fff;
+        text-shadow:
+          0 0 1px #000,
+          0 3px 0 #1a2040,
+          0 4px 0 #000,
+          0 6px 16px rgba(0, 0, 0, 0.6);
+        transform: rotate(-2deg);
+        filter: drop-shadow(0 4px 0 rgba(255, 217, 61, 0.5));
+      }
+      .shot-badge.accent-gold {
+        color: #ffe566;
+        text-shadow: 0 0 2px #000, 0 3px 0 #6a5200, 0 5px 0 #000, 0 0 28px rgba(255, 217, 61, 0.55);
+      }
+      .shot-badge.accent-coral {
+        color: #ffb3b3;
+        text-shadow: 0 0 2px #000, 0 3px 0 #6b2020, 0 5px 0 #000, 0 0 24px rgba(255, 107, 107, 0.5);
+      }
+      .shot-badge.accent-ice {
+        color: #c9f0ff;
+        text-shadow: 0 0 2px #000, 0 3px 0 #1a4a6a, 0 5px 0 #000, 0 0 24px rgba(107, 181, 255, 0.55);
+      }
+      .shot-badge.accent-magic {
+        color: #eac7ff;
+        text-shadow: 0 0 2px #000, 0 3px 0 #3d1a5c, 0 5px 0 #000, 0 0 28px rgba(199, 125, 255, 0.55);
+      }
+      .shot-card .shot-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 1rem 1.1rem 1.2rem;
+        z-index: 3;
+      }
+      .shot-card h3 {
+        font-family: 'Baloo 2', cursive;
+        font-size: 1.15rem;
+        font-weight: 800;
+        margin: 0 0 0.35rem;
+        color: #fff;
+      }
+      .shot-card p {
+        margin: 0;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: #c4c4e8;
+        line-height: 1.45;
+      }
+
+      /* Monster marquee */
+      .monster-reel {
+        position: relative;
+        margin: 0 calc(-1 * clamp(1rem, 3vw, 1.5rem)) 0;
+        mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+        overflow: hidden;
+      }
+      .monster-track {
+        display: flex;
+        gap: 0.85rem;
+        width: max-content;
+        animation: mtrack 52s linear infinite;
+        padding: 1rem 0;
+      }
+      @keyframes mtrack {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+      }
+      .mon-chip {
+        width: clamp(96px, 14vw, 132px);
+        aspect-ratio: 1;
+        flex-shrink: 0;
+        border-radius: 24px;
+        background: radial-gradient(circle at 30% 30%, rgba(107, 181, 255, 0.22), rgba(21, 21, 42, 0.9) 60%);
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+      }
+      .mon-chip::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), transparent 45%);
+      }
+      .mon-chip img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        padding: 12%;
+        filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.5));
+      }
+
+      /* Heroes */
+      .heroes-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+      }
+      @media (min-width: 900px) {
+        .heroes-layout {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+          align-items: stretch;
+          gap: 1.5rem;
+        }
+      }
+      .featured {
+        position: relative;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        aspect-ratio: 3 / 4;
+        max-height: 540px;
+        background: #0f0f1f;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+      }
+      .featured .f-img {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: opacity 0.6s ease, transform 7s ease;
+        opacity: 0;
+        transform: scale(1.05);
+      }
+      .featured .f-img.is-on {
+        opacity: 1;
+        transform: scale(1.12);
+      }
+      .featured::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, transparent 45%, rgba(6, 6, 15, 0.9) 100%);
+      }
+      .featured .f-label {
+        position: absolute;
+        left: 1.1rem;
+        bottom: 1rem;
+        z-index: 2;
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .featured .f-label .num {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(2.5rem, 7vw, 3.5rem);
+        font-weight: 800;
+        line-height: 1;
+        color: transparent;
+        background: linear-gradient(180deg, #fff, #6bb5ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+      }
+      .featured .f-label .nm {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      .hero-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        background: linear-gradient(160deg, rgba(28, 28, 54, 0.88), rgba(16, 16, 32, 0.96));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1.5rem;
+        padding: clamp(1rem, 2.5vw, 1.4rem);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .hero-picker {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.5rem;
+      }
+      .hero-thumb {
+        position: relative;
+        border: 2px solid transparent;
+        border-radius: 0.85rem;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        background: #15152a;
+        aspect-ratio: 1;
+        transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+      }
+      .hero-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+      }
+      .hero-thumb:hover {
+        transform: translateY(-2px) scale(1.04);
+        border-color: rgba(255, 217, 61, 0.35);
+      }
+      .hero-thumb:hover img { transform: scale(1.08); }
+      .hero-thumb.is-active {
+        border-color: var(--c-gold);
+        box-shadow:
+          0 0 0 2px rgba(255, 217, 61, 0.3),
+          0 10px 24px rgba(0, 0, 0, 0.45),
+          0 0 24px rgba(255, 217, 61, 0.25);
+      }
+      .hero-thumb.is-active::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+      }
+      .hero-thumb .num {
+        position: absolute;
+        top: 4px;
+        left: 6px;
+        font-size: 0.58rem;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        letter-spacing: 0.05em;
+      }
+      .hero-thumb .nm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        font-size: 0.58rem;
+        font-weight: 800;
+        text-align: center;
+        padding: 0.15rem 0.1rem;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.88));
+        color: #fff;
+        letter-spacing: 0.03em;
+      }
+      .bio { flex: 1; min-height: 8rem; }
+      .bio h3 {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+        font-weight: 800;
+        margin: 0 0 0.35rem;
+        color: #fff;
+        line-height: 1;
+      }
+      .bio .tag {
+        display: inline-block;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #1a2040;
+        background: linear-gradient(180deg, var(--c-gold), var(--c-gold-dim));
+        padding: 0.22rem 0.6rem;
+        border-radius: 6px;
+        margin-bottom: 0.7rem;
+      }
+      .bio p {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.55;
+        color: #d0d0e8;
+        font-weight: 500;
+      }
+      .bio .arrows { display: flex; gap: 0.5rem; margin-top: 1rem; }
+      .bio .arr-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 1px solid rgba(107, 181, 255, 0.35);
+        background: rgba(107, 181, 255, 0.1);
+        color: #c9e4ff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+      }
+      .bio .arr-btn:hover {
+        background: rgba(107, 181, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      /* App download */
+      .app-download .store-grid {
+        display: grid;
+        gap: 1.15rem;
+        grid-template-columns: 1fr;
+        max-width: 780px;
+        margin: 0 auto;
+      }
+      @media (min-width: 560px) {
+        .app-download .store-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      .store-card {
+        position: relative;
+        border-radius: 1.4rem;
+        padding: clamp(1.1rem, 3vw, 1.5rem);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.85rem;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .store-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1.5px;
+        background: linear-gradient(145deg, rgba(107, 181, 255, 0.6), rgba(199, 125, 255, 0.5), rgba(255, 217, 61, 0.5));
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: 0;
+      }
+      .store-card::after {
+        content: '';
+        position: absolute;
+        inset: 1.5px;
+        border-radius: inherit;
+        background: linear-gradient(160deg, rgba(28, 28, 54, 0.95), rgba(12, 12, 24, 0.98));
+        z-index: 0;
+      }
+      .store-card > * { position: relative; z-index: 1; }
+      .store-card .ribbon {
+        position: absolute;
+        top: 0.8rem;
+        right: 0.5rem;
+        z-index: 2;
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #1a2040;
+        background: linear-gradient(180deg, var(--c-gold), var(--c-gold-dim));
+        padding: 0.22rem 0.5rem;
+        border-radius: 6px;
+        transform: rotate(3deg);
+        box-shadow: 0 4px 14px rgba(255, 217, 61, 0.35);
+      }
+      .store-card h3 {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+        font-weight: 800;
+        margin: 0;
+        color: #fff;
+      }
+      .store-card .store-desc {
+        margin: 0;
+        font-size: 0.82rem;
+        color: #9a9ac0;
+        line-height: 1.4;
+        max-width: 280px;
+      }
+      .store-card .qr-link {
+        position: relative;
+        display: block;
+        line-height: 0;
+        border-radius: 1.1rem;
+        overflow: hidden;
+        width: min(220px, 72vw);
+        max-width: 100%;
+        transition: transform 0.25s ease;
+      }
+      .store-card .qr-link::before {
+        content: '';
+        position: absolute;
+        inset: -4px;
+        border-radius: 1.25rem;
+        background: conic-gradient(from 0deg, var(--c-gold), var(--c-magic), var(--c-primary-bright), var(--c-gold));
+        filter: blur(10px);
+        opacity: 0.55;
+        z-index: -1;
+        animation: halo 6s linear infinite;
+      }
+      .store-card .qr-link:hover { transform: scale(1.03); }
+      .store-card .qr-link img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        object-fit: cover;
+        display: block;
+        background: #fff;
+        border: 3px solid #fff;
+        border-radius: 1.1rem;
+      }
+      .store-card .store-cta {
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.92rem;
+        color: #6bb5ff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        border: 2px solid rgba(107, 181, 255, 0.35);
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .store-card .store-cta:hover {
+        background: rgba(107, 181, 255, 0.14);
+        color: #fff;
+      }
+      .store-card .url-preview {
+        font-size: 0.68rem;
+        color: #6c6c8a;
+        word-break: break-all;
+        max-width: 100%;
+        padding: 0 0.25rem;
+        line-height: 1.35;
+      }
+
+      /* Closing */
+      .closing {
+        position: relative;
+        text-align: center;
+        padding: clamp(2rem, 5vw, 3rem) 1rem 1.5rem;
+        border-radius: 1.75rem;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background:
+          radial-gradient(ellipse 80% 100% at 50% 0%, rgba(74, 144, 226, 0.28), transparent 60%),
+          linear-gradient(180deg, rgba(28, 28, 54, 0.7), rgba(12, 12, 24, 0.6));
+      }
+      .closing::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: conic-gradient(from 0deg, var(--c-gold), var(--c-magic), var(--c-primary-bright), var(--c-coral), var(--c-gold));
+        filter: blur(18px);
+        opacity: 0.25;
+        z-index: -1;
+        animation: halo 20s linear infinite;
+      }
+      .closing p {
+        font-family: 'Baloo 2', cursive;
+        font-size: clamp(1.2rem, 3vw, 1.55rem);
+        font-weight: 800;
+        color: #fff;
+        margin: 0 0 1.25rem;
+        max-width: 32rem;
+        margin-left: auto;
+        margin-right: auto;
+        letter-spacing: -0.01em;
+      }
+
+      footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #6c6c8a;
+        padding: 2rem 1rem 1.5rem;
+      }
+      footer a {
+        color: #6bb5ff;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      footer a:hover { text-decoration: underline; }
+
+      /* Reveal on scroll */
+      .reveal {
+        opacity: 0;
+        transform: translateY(22px);
+        transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Floating CTA */
+      .float-cta {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 50;
+        font-family: 'Baloo 2', cursive;
+        font-weight: 800;
+        font-size: 0.95rem;
+        color: #1a2040;
+        text-decoration: none;
+        padding: 0.7rem 1.1rem;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #ffe566, var(--c-gold), var(--c-gold-dim));
+        box-shadow: 0 6px 0 #8a6500, 0 14px 30px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+        pointer-events: none;
+      }
+      .float-cta.show {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+      .float-cta:hover { filter: brightness(1.08); }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sky" aria-hidden="true">
+      <div class="stars"></div>
+      <div class="stars-2"></div>
+    </div>
+    <div class="nebula" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="monster-bg" aria-hidden="true">
+      <div class="layer" id="monster-layer-a"></div>
+      <div class="layer" id="monster-layer-b"></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="noise" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <img src="./assets/logocaiman.svg" alt="Caiman Interactive" width="160" height="44" />
+          <span data-i18n="brand_presents">presents</span>
+        </div>
+        <div class="header-right">
+          <nav class="top-nav" aria-label="Sections">
+            <a href="#minijuegos" data-i18n="nav_minigames">Mini-games</a>
+            <a href="#bestiario" data-i18n="nav_bestiary">Bestiary</a>
+            <a href="#heroes" data-i18n="nav_heroes">Heroes</a>
+            <a href="#descargar" data-i18n="nav_download">Download</a>
+          </nav>
+          <div class="lang-switcher">
+            <button
+              type="button"
+              class="lang-btn"
+              id="lang-btn"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              data-i18n-attr="aria-label:aria_language"
+              aria-label="Language"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M3 12h18"></path>
+                <path d="M12 3a13.5 13.5 0 0 1 0 18"></path>
+                <path d="M12 3a13.5 13.5 0 0 0 0 18"></path>
+              </svg>
+              <span id="lang-current">EN</span>
+              <span class="caret" aria-hidden="true">▾</span>
+            </button>
+            <ul class="lang-menu" id="lang-menu" role="listbox" hidden>
+              <li role="option" data-lang="English"><span class="code">EN</span> English</li>
+              <li role="option" data-lang="Spanish"><span class="code">ES</span> Español</li>
+              <li role="option" data-lang="Catalan"><span class="code">CA</span> Català</li>
+              <li role="option" data-lang="French"><span class="code">FR</span> Français</li>
+              <li role="option" data-lang="Portuguese"><span class="code">PT</span> Português</li>
+              <li role="option" data-lang="German"><span class="code">DE</span> Deutsch</li>
+              <li role="option" data-lang="Dutch"><span class="code">NL</span> Nederlands</li>
+              <li role="option" data-lang="Russian"><span class="code">RU</span> Русский</li>
+            </ul>
+          </div>
+        </div>
+      </header>
+
+      <section class="hero">
+        <p class="eyebrow">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span data-i18n="eyebrow">100 levels · tables 2 to 10 · multiplayer</span>
+        </p>
+        <h1 class="kinetic">
+          <span class="line"><span class="word" data-i18n="h1_line1">What if maths</span></span>
+          <span class="line"><span class="word" data-i18n="h1_line2">was your favourite</span></span>
+          <span class="line"><span class="accent" data-i18n="h1_line3">GAME?</span></span>
+        </h1>
+        <p class="lede" data-i18n-html="lede"></p>
+
+        <div class="hero-floats reveal" aria-hidden="true">
+          <div class="float f-1"><img src="./assets/heros/11-Orion.jpg" alt="" loading="lazy" /></div>
+          <div class="float f-2"><img src="./assets/heros/9-Nico.jpg" alt="" loading="lazy" /></div>
+          <div class="float f-3"><img src="./assets/heros/16-Nova.jpg" alt="" loading="lazy" /></div>
+        </div>
+
+        <div class="cta-row">
+          <div class="btn-duo">
+            <a
+              class="btn-play sparkly"
+              href="https://www.caimaninteractive.com/multihero/play"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span data-i18n="cta_play_pc">Play now on PC</span>
+              <span class="arrow">→</span>
+            </a>
+            <a class="btn-ghost" href="#descargar" data-i18n="cta_download">Get the app</a>
+          </div>
+          <div class="cta-meta">
+            <span><strong>20</strong> <span data-i18n="stats_heroes">heroes</span></span>
+            <span><strong>100</strong> <span data-i18n="stats_levels">levels</span></span>
+            <span><strong>100</strong> <span data-i18n="stats_monsters">monsters</span></span>
+            <span><strong>4</strong> <span data-i18n="stats_minigames">mini-games</span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="minijuegos" aria-labelledby="mini-title">
+        <div class="section-head reveal">
+          <span class="kicker-tag" data-i18n="section_gameplay_tag">Gameplay</span>
+          <h2 class="section-title" id="mini-title" data-i18n="section_minigames_title">
+            Mini-games that won't let go
+          </h2>
+          <p class="section-sub" data-i18n="section_minigames_sub">
+            One map, wildly different rides. Pick how you rule the tables.
+          </p>
+        </div>
+        <div class="minigame-grid">
+          <article class="shot-card tilt reveal">
+            <div class="shot-bg" style="background-image: url('./assets/screens/battle-map.jpg')"></div>
+            <div class="shot-scrim"></div>
+            <div class="corner">
+              <span class="shot-number">01</span>
+              <span class="shot-tag" data-i18n="mg1_tag">Battle</span>
+            </div>
+            <div class="shot-badge-wrap">
+              <span class="shot-badge accent-coral" data-i18n-html="mg1_badge">Go for<br />the boss!</span>
+            </div>
+            <div class="shot-body">
+              <h3 data-i18n="mg1_title">Table battles</h3>
+              <p data-i18n="mg1_text">Unique monster bosses: every right answer hurts the beast.</p>
+            </div>
+          </article>
+          <article class="shot-card tilt reveal">
+            <div class="shot-bg" style="background-image: url('./assets/screens/hero-runner.png')"></div>
+            <div class="shot-scrim"></div>
+            <div class="corner">
+              <span class="shot-number">02</span>
+              <span class="shot-tag" data-i18n="mg2_tag">3D · Runner</span>
+            </div>
+            <div class="shot-badge-wrap">
+              <span class="shot-badge accent-gold" data-i18n-html="mg2_badge">Run &amp;<br />nail it!</span>
+            </div>
+            <div class="shot-body">
+              <h3 data-i18n="mg2_title">Hero Runner 3D</h3>
+              <p data-i18n="mg2_text">Speed, answer arches and space scenery.</p>
+            </div>
+          </article>
+          <article class="shot-card tilt reveal">
+            <div class="shot-bg" style="background-image: url('./assets/screens/platform-climb.jpg')"></div>
+            <div class="shot-scrim"></div>
+            <div class="corner">
+              <span class="shot-number">03</span>
+              <span class="shot-tag" data-i18n="mg3_tag">Daily</span>
+            </div>
+            <div class="shot-badge-wrap">
+              <span class="shot-badge accent-ice" data-i18n-html="mg3_badge">Daily<br />mission!</span>
+            </div>
+            <div class="shot-body">
+              <h3 data-i18n="mg3_title">Daily mission</h3>
+              <p data-i18n="mg3_text">Platforms and answers on the move: the weekly challenge that hooks you to the calendar.</p>
+            </div>
+          </article>
+          <article class="shot-card tilt reveal">
+            <div class="shot-bg" style="background-image: url('./assets/screens/multiplayer-map.jpg')"></div>
+            <div class="shot-scrim"></div>
+            <div class="corner">
+              <span class="shot-number">04</span>
+              <span class="shot-tag" data-i18n="mg4_tag">Versus</span>
+            </div>
+            <div class="shot-badge-wrap">
+              <span class="shot-badge accent-magic" data-i18n-html="mg4_badge">Dare your<br />crew!</span>
+            </div>
+            <div class="shot-body">
+              <h3 data-i18n="mg4_title">Multiplayer</h3>
+              <p data-i18n="mg4_text">Hero code, duels and laughs with friends.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="bestiario" aria-labelledby="bestiario-title">
+        <div class="section-head reveal">
+          <span class="kicker-tag" data-i18n="section_bestiary_tag">Bestiary</span>
+          <h2 class="section-title" id="bestiario-title" data-i18n="section_bestiary_title">
+            100 monsters to defeat
+          </h2>
+          <p class="section-sub" data-i18n="section_bestiary_sub">
+            Each map level brings its own creature.
+          </p>
+        </div>
+        <div class="monster-reel reveal">
+          <div class="monster-track" id="monster-track"></div>
+        </div>
+      </section>
+
+      <section class="section" id="heroes" aria-labelledby="heroes-title">
+        <div class="section-head reveal">
+          <span class="kicker-tag" data-i18n="section_roster_tag">Roster</span>
+          <h2 class="section-title" id="heroes-title" data-i18n="section_heroes_title">20 heroes. 20 legends.</h2>
+          <p class="section-sub" data-i18n="section_heroes_sub">
+            Tap a portrait and read their story.
+          </p>
+        </div>
+        <div class="heroes-layout reveal">
+          <div class="featured" id="featured">
+            <div class="f-img" id="f-img-a"></div>
+            <div class="f-img" id="f-img-b"></div>
+            <div class="f-label">
+              <span class="num" id="f-num">01</span>
+              <span class="nm" id="f-name">Leo</span>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="hero-picker" id="hero-picker" role="tablist" aria-label="Pick a hero"></div>
+            <div class="bio" aria-live="polite">
+              <h3 id="bio-name">Leo</h3>
+              <span class="tag" id="bio-tag" hidden></span>
+              <p id="bio-text"></p>
+              <div class="arrows">
+                <button
+                  type="button"
+                  class="arr-btn"
+                  id="prev-hero"
+                  aria-label="Previous hero"
+                  data-i18n-attr="aria-label:prev_hero"
+                >←</button>
+                <button
+                  type="button"
+                  class="arr-btn"
+                  id="next-hero"
+                  aria-label="Next hero"
+                  data-i18n-attr="aria-label:next_hero"
+                >→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section app-download" id="descargar" aria-labelledby="app-download-title">
+        <div class="section-head reveal">
+          <span class="kicker-tag" data-i18n="section_mobile_tag">Mobile</span>
+          <h2 class="section-title" id="app-download-title" data-i18n="section_download_title">
+            Take it in your pocket
+          </h2>
+          <p class="section-sub" data-i18n="section_download_sub">
+            Scan the code and open the store.
+          </p>
+        </div>
+        <div class="store-grid">
+          <div class="store-card reveal">
+            <span class="ribbon" data-i18n="provisional_url">Placeholder URL</span>
+            <h3>Google Play</h3>
+            <p class="store-desc" data-i18n="play_desc">
+              Android: same Multihero universe as soon as the listing goes live.
+            </p>
+            <a
+              class="qr-link"
+              href="https://play.google.com/store/apps/details?id=com.caimaninteractive.multihero"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open Google Play placeholder"
+            >
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&amp;data=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.caimaninteractive.multihero"
+                alt="QR code: Google Play (placeholder link)"
+                width="220"
+                height="220"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <a
+              class="store-cta"
+              href="https://play.google.com/store/apps/details?id=com.caimaninteractive.multihero"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-i18n="open_play"
+              >Open in Play Store</a
+            >
+            <p class="url-preview">play.google.com/...id=com.caimaninteractive.multihero</p>
+          </div>
+          <div class="store-card reveal">
+            <span class="ribbon" data-i18n="provisional_url">Placeholder URL</span>
+            <h3>App Store</h3>
+            <p class="store-desc" data-i18n="apple_desc">
+              iPhone &amp; iPad: example link; replace with the real app ID.
+            </p>
+            <a
+              class="qr-link"
+              href="https://apps.apple.com/app/multihero/id0000000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open App Store placeholder"
+            >
+              <img
+                src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&amp;data=https%3A%2F%2Fapps.apple.com%2Fapp%2Fmultihero%2Fid0000000000"
+                alt="QR code: App Store (placeholder link)"
+                width="220"
+                height="220"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <a
+              class="store-cta"
+              href="https://apps.apple.com/app/multihero/id0000000000"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-i18n="open_app"
+              >Open in App Store</a
+            >
+            <p class="url-preview">apps.apple.com/app/multihero/id0000000000</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section closing reveal">
+        <p data-i18n="closing_text">What are you waiting for? The map won't conquer itself.</p>
+        <a
+          class="btn-play sparkly"
+          href="https://www.caimaninteractive.com/multihero/play"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span data-i18n="cta_enter">Enter Multihero</span>
+          <span class="arrow">→</span>
+        </a>
+      </section>
+
+      <footer>
+        <p>© Caiman Interactive · <a href="https://www.caimaninteractive.com">www.caimaninteractive.com</a></p>
+      </footer>
+    </div>
+
+    <a
+      class="float-cta"
+      id="float-cta"
+      href="https://www.caimaninteractive.com/multihero/play"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-i18n="float_cta"
+      >Play on PC →</a
+    >
+
+    <script>
+      /* =======================  TRANSLATIONS  ======================= */
+      var I18N = {
+        English: {
+          brand_presents: 'presents',
+          aria_language: 'Language',
+          nav_minigames: 'Mini-games',
+          nav_bestiary: 'Bestiary',
+          nav_heroes: 'Heroes',
+          nav_download: 'Download',
+          eyebrow: '100 levels · tables 2 to 10 · multiplayer',
+          h1_line1: 'What if maths',
+          h1_line2: 'was your favourite',
+          h1_line3: 'GAME?',
+          lede:
+            '<strong>Multihero</strong> throws you into an epic map: table battles, 3D races, a daily mission and duels with friends. <strong>On PC in your browser</strong> or <strong>on mobile</strong>. Learning multiplication has never had a better excuse.',
+          cta_play_pc: 'Play now on PC',
+          cta_download: 'Get the app',
+          stats_heroes: 'heroes',
+          stats_levels: 'levels',
+          stats_monsters: 'monsters',
+          stats_minigames: 'mini-games',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: "Mini-games that won't let go",
+          section_minigames_sub: 'One map, wildly different rides. Pick how you rule the tables.',
+          mg1_tag: 'Battle',
+          mg1_badge: 'Go for<br />the boss!',
+          mg1_title: 'Table battles',
+          mg1_text: 'Unique monster bosses: every right answer hurts the beast and brings the Maticoins closer.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Run &amp;<br />nail it!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Speed, answer arches and space scenery. Pure math adrenaline.',
+          mg3_tag: 'Daily',
+          mg3_badge: 'Daily<br />mission!',
+          mg3_title: 'Daily mission',
+          mg3_text:
+            'Platforms and answers on the move: the weekly challenge that hooks you to the calendar.',
+          mg4_tag: 'Versus',
+          mg4_badge: 'Dare your<br />crew!',
+          mg4_title: 'Multiplayer',
+          mg4_text: 'Hero code, duels and laughs with friends. Tables have never been so social.',
+          section_bestiary_tag: 'Bestiary',
+          section_bestiary_title: '100 monsters to defeat',
+          section_bestiary_sub:
+            'From Yelo to the fearsome Punchy: every map level brings its own creature, ready to get taken down… with maths.',
+          section_roster_tag: 'Roster',
+          section_heroes_title: '20 heroes. 20 legends.',
+          section_heroes_sub:
+            'Tap a portrait and read their story. Each one has attitude, colour and a spot on the map.',
+          prev_hero: 'Previous hero',
+          next_hero: 'Next hero',
+          hero_tag_speed: 'Extreme speed',
+          section_mobile_tag: 'Mobile',
+          section_download_title: 'Take it in your pocket',
+          section_download_sub:
+            'Scan the code and open the store. Placeholder links until the real pages go live.',
+          provisional_url: 'Placeholder URL',
+          play_desc: 'Android: same Multihero universe as soon as the public listing goes live.',
+          apple_desc: 'iPhone & iPad: example link; replace with the real app ID.',
+          open_play: 'Open in Play Store',
+          open_app: 'Open in App Store',
+          closing_text: "What are you waiting for? The map won't conquer itself.",
+          cta_enter: 'Enter Multihero',
+          float_cta: 'Play on PC →',
+        },
+        Spanish: {
+          brand_presents: 'presenta',
+          aria_language: 'Idioma',
+          nav_minigames: 'Minijuegos',
+          nav_bestiary: 'Bestiario',
+          nav_heroes: 'Héroes',
+          nav_download: 'Descargar',
+          eyebrow: '100 niveles · tablas del 2 al 10 · multijugador',
+          h1_line1: '¿Y si las mates',
+          h1_line2: 'fueran tu juego',
+          h1_line3: 'FAVORITO?',
+          lede:
+            '<strong>Multihero</strong> te adentra en un mapa épico: combates por tablas, carreras 3D, misión diaria y duelos con amigos. <strong>En PC en tu navegador</strong> o <strong>en el móvil</strong>. Aprender multiplicaciones no ha tenido mejor excusa.',
+          cta_play_pc: 'Jugar ahora en PC',
+          cta_download: 'Descargar la app',
+          stats_heroes: 'héroes',
+          stats_levels: 'niveles',
+          stats_monsters: 'monstruos',
+          stats_minigames: 'minijuegos',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Minijuegos que no sueltan',
+          section_minigames_sub:
+            'Mismo mapa, distintas locuras: elige cómo quieres demostrar que dominas las tablas.',
+          mg1_tag: 'Batalla',
+          mg1_badge: '¡A por<br />el jefe!',
+          mg1_title: 'Batalla por tablas',
+          mg1_text:
+            'Monstruos únicos como jefes: cada acierto castiga al bicho y te acerca al botín de Maticoins.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: '¡Corre y<br />acierta!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Velocidad, arcos con respuestas y escenarios espaciales. Pura adrenalina matemática.',
+          mg3_tag: 'Diaria',
+          mg3_badge: '¡Misión<br />diaria!',
+          mg3_title: 'Misión diaria',
+          mg3_text:
+            'Recorrido, plataformas y aciertos en movimiento: el reto semanal que te engancha al calendario.',
+          mg4_tag: 'Versus',
+          mg4_badge: '¡Reto a<br />tu crew!',
+          mg4_title: 'Multijugador',
+          mg4_text: 'Código de héroe, duelos y risas con amigos: las tablas nunca fueron tan sociales.',
+          section_bestiary_tag: 'Bestiario',
+          section_bestiary_title: '100 monstruos para derrotar',
+          section_bestiary_sub:
+            'De Yelo al temible Punchy: cada nivel del mapa trae su propia criatura lista para que la mates… con mates.',
+          section_roster_tag: 'Plantilla',
+          section_heroes_title: '20 héroes. 20 leyendas.',
+          section_heroes_sub:
+            'Elige retrato y lee su historia. Cada uno tiene carácter, color y un sitio en el mapa.',
+          prev_hero: 'Héroe anterior',
+          next_hero: 'Siguiente héroe',
+          hero_tag_speed: 'Velocidad extrema',
+          section_mobile_tag: 'Móvil',
+          section_download_title: 'Llévatelo en el bolsillo',
+          section_download_sub:
+            'Escanea el código y abre la tienda. URLs de ejemplo hasta que publiquemos las fichas reales.',
+          provisional_url: 'URL provisional',
+          play_desc: 'Android: mismo universo Multihero en cuanto esté la ficha pública.',
+          apple_desc: 'iPhone e iPad: enlace de ejemplo; sustituye por el ID real de la app.',
+          open_play: 'Abrir en Play Store',
+          open_app: 'Abrir en App Store',
+          closing_text: '¿A qué esperas? El mapa no se va a conquistar solo.',
+          cta_enter: 'Entrar a Multihero',
+          float_cta: 'Jugar en PC →',
+        },
+        Catalan: {
+          brand_presents: 'presenta',
+          aria_language: 'Idioma',
+          nav_minigames: 'Minijocs',
+          nav_bestiary: 'Bestiari',
+          nav_heroes: 'Herois',
+          nav_download: 'Descarregar',
+          eyebrow: '100 nivells · taules del 2 al 10 · multijugador',
+          h1_line1: 'I si les mates',
+          h1_line2: 'fossin el teu joc',
+          h1_line3: 'PREFERIT?',
+          lede:
+            "<strong>Multihero</strong> t'endinsa en un mapa èpic: combats per taules, curses 3D, missió diària i duels amb amics. <strong>Al PC al teu navegador</strong> o <strong>al mòbil</strong>. Aprendre multiplicacions no ha tingut mai millor excusa.",
+          cta_play_pc: 'Jugar ara al PC',
+          cta_download: "Descarregar l'app",
+          stats_heroes: 'herois',
+          stats_levels: 'nivells',
+          stats_monsters: 'monstres',
+          stats_minigames: 'minijocs',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Minijocs que no deixen anar',
+          section_minigames_sub:
+            'Mateix mapa, follies diferents: tria com vols demostrar que domines les taules.',
+          mg1_tag: 'Batalla',
+          mg1_badge: 'A pel<br />cap!',
+          mg1_title: 'Batalla per taules',
+          mg1_text:
+            "Monstres únics com a caps: cada encert fa mal a la bèstia i t'acosta al botí de Maticoins.",
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Corre i<br />encerta!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Velocitat, arcs amb respostes i escenaris espacials. Pura adrenalina matemàtica.',
+          mg3_tag: 'Diària',
+          mg3_badge: 'Missió<br />diària!',
+          mg3_title: 'Missió diària',
+          mg3_text:
+            "Recorregut, plataformes i encerts en moviment: el repte setmanal que t'enganxa al calendari.",
+          mg4_tag: 'Versus',
+          mg4_badge: 'Repte<br />amb amics!',
+          mg4_title: 'Multijugador',
+          mg4_text: "Codi d'heroi, duels i rialles amb els amics: les taules mai no havien estat tan socials.",
+          section_bestiary_tag: 'Bestiari',
+          section_bestiary_title: '100 monstres per derrotar',
+          section_bestiary_sub:
+            "Del Yelo al temible Punchy: cada nivell del mapa porta la seva criatura llesta per caure… amb mates.",
+          section_roster_tag: 'Plantilla',
+          section_heroes_title: '20 herois. 20 llegendes.',
+          section_heroes_sub:
+            'Tria retrat i llegeix la seva història. Cadascun té caràcter, color i un lloc al mapa.',
+          prev_hero: 'Heroi anterior',
+          next_hero: 'Heroi següent',
+          hero_tag_speed: 'Velocitat extrema',
+          section_mobile_tag: 'Mòbil',
+          section_download_title: "Emporta-te'l a la butxaca",
+          section_download_sub:
+            "Escaneja el codi i obre la tenda. URLs d'exemple fins que publiquem les fitxes reals.",
+          provisional_url: 'URL provisional',
+          play_desc: 'Android: mateix univers Multihero tan aviat com la fitxa sigui pública.',
+          apple_desc: "iPhone i iPad: enllaç d'exemple; substitueix per l'ID real.",
+          open_play: 'Obrir a Play Store',
+          open_app: 'Obrir a App Store',
+          closing_text: 'A què esperes? El mapa no es conquerirà tot sol.',
+          cta_enter: 'Entrar a Multihero',
+          float_cta: 'Jugar al PC →',
+        },
+        French: {
+          brand_presents: 'présente',
+          aria_language: 'Langue',
+          nav_minigames: 'Mini-jeux',
+          nav_bestiary: 'Bestiaire',
+          nav_heroes: 'Héros',
+          nav_download: 'Télécharger',
+          eyebrow: '100 niveaux · tables de 2 à 10 · multijoueur',
+          h1_line1: 'Et si les maths',
+          h1_line2: 'étaient ton jeu',
+          h1_line3: 'PRÉFÉRÉ ?',
+          lede:
+            "<strong>Multihero</strong> te plonge dans une carte épique : combats de tables, courses 3D, mission quotidienne et duels entre amis. <strong>Sur PC dans ton navigateur</strong> ou <strong>sur mobile</strong>. Apprendre les multiplications n'a jamais eu meilleure excuse.",
+          cta_play_pc: 'Jouer maintenant sur PC',
+          cta_download: "Télécharger l'appli",
+          stats_heroes: 'héros',
+          stats_levels: 'niveaux',
+          stats_monsters: 'monstres',
+          stats_minigames: 'mini-jeux',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Des mini-jeux qui ne lâchent rien',
+          section_minigames_sub:
+            'Même carte, défis très différents : choisis comment dompter les tables.',
+          mg1_tag: 'Combat',
+          mg1_badge: "À l'assaut<br />du boss !",
+          mg1_title: 'Combats de tables',
+          mg1_text:
+            'Des boss monstres uniques : chaque bonne réponse frappe la bête et rapproche le butin de Maticoins.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Cours et<br />vise juste !',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: "Vitesse, arches de réponses et décors spatiaux. De l'adrénaline pure en maths.",
+          mg3_tag: 'Quotidien',
+          mg3_badge: 'Mission<br />quotidienne !',
+          mg3_title: 'Mission quotidienne',
+          mg3_text:
+            'Plates-formes et bonnes réponses en mouvement : le défi hebdo qui te colle au calendrier.',
+          mg4_tag: 'Versus',
+          mg4_badge: 'Défie<br />ta bande !',
+          mg4_title: 'Multijoueur',
+          mg4_text:
+            "Code de héros, duels et fous rires entre amis : les tables n'ont jamais été aussi sociables.",
+          section_bestiary_tag: 'Bestiaire',
+          section_bestiary_title: '100 monstres à vaincre',
+          section_bestiary_sub:
+            'De Yelo au redoutable Punchy : chaque niveau apporte sa créature, prête à tomber… par les maths.',
+          section_roster_tag: 'Équipe',
+          section_heroes_title: '20 héros. 20 légendes.',
+          section_heroes_sub:
+            'Choisis un portrait et lis son histoire. Chacun a son caractère, sa couleur et sa place sur la carte.',
+          prev_hero: 'Héros précédent',
+          next_hero: 'Héros suivant',
+          hero_tag_speed: 'Vitesse extrême',
+          section_mobile_tag: 'Mobile',
+          section_download_title: 'Emporte-le dans ta poche',
+          section_download_sub:
+            'Scanne le code et ouvre le store. Liens provisoires en attendant les fiches réelles.',
+          provisional_url: 'URL provisoire',
+          play_desc: 'Android : le même univers Multihero dès la publication.',
+          apple_desc: "iPhone et iPad : lien d'exemple ; remplacer par l'ID réel.",
+          open_play: 'Ouvrir dans Play Store',
+          open_app: 'Ouvrir dans App Store',
+          closing_text: "Qu'attends-tu ? La carte ne va pas se conquérir toute seule.",
+          cta_enter: 'Entrer dans Multihero',
+          float_cta: 'Jouer sur PC →',
+        },
+        Portuguese: {
+          brand_presents: 'apresenta',
+          aria_language: 'Idioma',
+          nav_minigames: 'Minijogos',
+          nav_bestiary: 'Bestiário',
+          nav_heroes: 'Heróis',
+          nav_download: 'Descarregar',
+          eyebrow: '100 níveis · tabuadas de 2 a 10 · multijogador',
+          h1_line1: 'E se a mate',
+          h1_line2: 'fosse o teu jogo',
+          h1_line3: 'FAVORITO?',
+          lede:
+            '<strong>Multihero</strong> atira-te para um mapa épico: combates de tabuadas, corridas 3D, missão diária e duelos com amigos. <strong>No PC pelo navegador</strong> ou <strong>no telemóvel</strong>. Aprender a multiplicar nunca teve melhor desculpa.',
+          cta_play_pc: 'Jogar agora no PC',
+          cta_download: 'Descarregar a app',
+          stats_heroes: 'heróis',
+          stats_levels: 'níveis',
+          stats_monsters: 'monstros',
+          stats_minigames: 'minijogos',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Minijogos que não largam',
+          section_minigames_sub:
+            'O mesmo mapa, loucuras bem diferentes: escolhe como dominas as tabuadas.',
+          mg1_tag: 'Combate',
+          mg1_badge: 'Vai ao<br />chefe!',
+          mg1_title: 'Combate por tabuadas',
+          mg1_text:
+            'Monstros únicos como chefes: cada acerto castiga o bicho e aproxima o saque de Maticoins.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Corre e<br />acerta!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Velocidade, arcos de resposta e cenários espaciais. Pura adrenalina matemática.',
+          mg3_tag: 'Diária',
+          mg3_badge: 'Missão<br />diária!',
+          mg3_title: 'Missão diária',
+          mg3_text:
+            'Percurso, plataformas e acertos em movimento: o desafio semanal que te prende ao calendário.',
+          mg4_tag: 'Versus',
+          mg4_badge: 'Desafia a<br />tua malta!',
+          mg4_title: 'Multijogador',
+          mg4_text: 'Código de herói, duelos e risos com amigos: as tabuadas nunca foram tão sociais.',
+          section_bestiary_tag: 'Bestiário',
+          section_bestiary_title: '100 monstros para derrotar',
+          section_bestiary_sub:
+            'Do Yelo ao temível Punchy: cada nível tem a sua criatura pronta a cair… com a mate.',
+          section_roster_tag: 'Equipa',
+          section_heroes_title: '20 heróis. 20 lendas.',
+          section_heroes_sub:
+            'Toca num retrato e lê a história. Cada um tem atitude, cor e um lugar no mapa.',
+          prev_hero: 'Herói anterior',
+          next_hero: 'Próximo herói',
+          hero_tag_speed: 'Velocidade extrema',
+          section_mobile_tag: 'Telemóvel',
+          section_download_title: 'Leva-o no bolso',
+          section_download_sub:
+            'Lê o código e abre a loja. Links provisórios até publicarmos as fichas reais.',
+          provisional_url: 'URL provisório',
+          play_desc: 'Android: o mesmo universo Multihero assim que a ficha estiver pública.',
+          apple_desc: 'iPhone e iPad: link de exemplo; substituir pelo ID real.',
+          open_play: 'Abrir na Play Store',
+          open_app: 'Abrir na App Store',
+          closing_text: 'Do que estás à espera? O mapa não se conquista sozinho.',
+          cta_enter: 'Entrar em Multihero',
+          float_cta: 'Jogar no PC →',
+        },
+        German: {
+          brand_presents: 'präsentiert',
+          aria_language: 'Sprache',
+          nav_minigames: 'Minispiele',
+          nav_bestiary: 'Bestiarium',
+          nav_heroes: 'Helden',
+          nav_download: 'Laden',
+          eyebrow: '100 Level · Reihen 2 bis 10 · Mehrspieler',
+          h1_line1: 'Was, wenn Mathe',
+          h1_line2: 'dein Lieblings-',
+          h1_line3: 'SPIEL WÄRE?',
+          lede:
+            '<strong>Multihero</strong> schickt dich auf eine epische Karte: Reihen-Kämpfe, 3D-Läufe, Tagesmission und Duelle mit Freunden. <strong>Am PC im Browser</strong> oder <strong>mobil</strong>. Einmaleins lernen? Nie war es reizvoller.',
+          cta_play_pc: 'Jetzt am PC spielen',
+          cta_download: 'App laden',
+          stats_heroes: 'Helden',
+          stats_levels: 'Level',
+          stats_monsters: 'Monster',
+          stats_minigames: 'Minispiele',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Minispiele, die nicht loslassen',
+          section_minigames_sub:
+            'Eine Karte, völlig verschiedene Ritte: such dir aus, wie du die Reihen knackst.',
+          mg1_tag: 'Kampf',
+          mg1_badge: 'Auf zum<br />Boss!',
+          mg1_title: 'Reihen-Kampf',
+          mg1_text:
+            'Einzigartige Monster-Bosse: jeder Treffer schadet der Bestie und bringt dich näher an die Maticoin-Beute.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Renn und<br />triff!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Tempo, Antwort-Tore und Weltraum-Kulissen. Pures Mathe-Adrenalin.',
+          mg3_tag: 'Täglich',
+          mg3_badge: 'Tages-<br />mission!',
+          mg3_title: 'Tägliche Mission',
+          mg3_text:
+            'Plattformen und Treffer in Bewegung: die Wochen-Challenge, die dich am Kalender hält.',
+          mg4_tag: 'Versus',
+          mg4_badge: 'Fordere deine<br />Crew!',
+          mg4_title: 'Mehrspieler',
+          mg4_text: 'Helden-Code, Duelle und Lachen mit Freunden: Einmaleins war nie so gesellig.',
+          section_bestiary_tag: 'Bestiarium',
+          section_bestiary_title: '100 Monster zum Besiegen',
+          section_bestiary_sub:
+            'Von Yelo bis zum furchterregenden Punchy: jedes Level bringt seine eigene Kreatur – bereit, mit Mathe zu fallen.',
+          section_roster_tag: 'Team',
+          section_heroes_title: '20 Helden. 20 Legenden.',
+          section_heroes_sub:
+            'Tipp ein Porträt an und lies die Geschichte. Jeder hat Attitüde, Farbe und einen Platz auf der Karte.',
+          prev_hero: 'Vorheriger Held',
+          next_hero: 'Nächster Held',
+          hero_tag_speed: 'Extreme Geschwindigkeit',
+          section_mobile_tag: 'Mobil',
+          section_download_title: 'Nimm es in die Tasche',
+          section_download_sub:
+            'Code scannen und Store öffnen. Platzhalter-Links, bis die echten Seiten online sind.',
+          provisional_url: 'Platzhalter-URL',
+          play_desc: 'Android: dasselbe Multihero-Universum, sobald der Eintrag live ist.',
+          apple_desc: 'iPhone & iPad: Beispiel-Link; echte App-ID einsetzen.',
+          open_play: 'Im Play Store öffnen',
+          open_app: 'Im App Store öffnen',
+          closing_text: 'Worauf wartest du? Die Karte erobert sich nicht von selbst.',
+          cta_enter: 'Multihero betreten',
+          float_cta: 'Am PC spielen →',
+        },
+        Dutch: {
+          brand_presents: 'presenteert',
+          aria_language: 'Taal',
+          nav_minigames: 'Minigames',
+          nav_bestiary: 'Bestiarium',
+          nav_heroes: 'Helden',
+          nav_download: 'Downloaden',
+          eyebrow: '100 niveaus · tafels 2 t/m 10 · multiplayer',
+          h1_line1: 'Wat als rekenen',
+          h1_line2: 'je favoriete',
+          h1_line3: 'SPEL WAS?',
+          lede:
+            "<strong>Multihero</strong> zet je op een epische kaart: tafelgevechten, 3D-races, een dagelijkse missie en duels met vrienden. <strong>Op pc in je browser</strong> of <strong>op mobiel</strong>. Tafels leren heeft nog nooit zo'n goede smoes gehad.",
+          cta_play_pc: 'Nu spelen op pc',
+          cta_download: 'App downloaden',
+          stats_heroes: 'helden',
+          stats_levels: 'niveaus',
+          stats_monsters: 'monsters',
+          stats_minigames: 'minigames',
+          section_gameplay_tag: 'Gameplay',
+          section_minigames_title: 'Minigames die je vasthouden',
+          section_minigames_sub:
+            'Dezelfde kaart, totaal andere rush: kies hoe jij de tafels kraakt.',
+          mg1_tag: 'Gevecht',
+          mg1_badge: 'Op naar<br />de baas!',
+          mg1_title: 'Tafelgevecht',
+          mg1_text:
+            'Unieke monster-bazen: elk goed antwoord raakt het beest en brengt de Maticoins dichterbij.',
+          mg2_tag: '3D · Runner',
+          mg2_badge: 'Ren en<br />raak!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Snelheid, antwoordpoorten en ruimtedecors. Pure rekenadrenaline.',
+          mg3_tag: 'Dagelijks',
+          mg3_badge: 'Dagelijkse<br />missie!',
+          mg3_title: 'Dagelijkse missie',
+          mg3_text:
+            'Parcours, platforms en goede antwoorden in beweging: de weekuitdaging die je aan de kalender plakt.',
+          mg4_tag: 'Versus',
+          mg4_badge: 'Daag je<br />crew uit!',
+          mg4_title: 'Multiplayer',
+          mg4_text: 'Heldencode, duels en plezier met vrienden: tafels waren nog nooit zo sociaal.',
+          section_bestiary_tag: 'Bestiarium',
+          section_bestiary_title: '100 monsters verslaan',
+          section_bestiary_sub:
+            'Van Yelo tot de gevreesde Punchy: elk niveau levert een eigen wezen dat klaar is om te vallen… dankzij rekenen.',
+          section_roster_tag: 'Ploeg',
+          section_heroes_title: '20 helden. 20 legendes.',
+          section_heroes_sub:
+            'Tik een portret aan en lees het verhaal. Elk heeft stijl, kleur en een plek op de kaart.',
+          prev_hero: 'Vorige held',
+          next_hero: 'Volgende held',
+          hero_tag_speed: 'Extreme snelheid',
+          section_mobile_tag: 'Mobiel',
+          section_download_title: 'Neem het mee op zak',
+          section_download_sub:
+            "Scan de code en open de store. Voorbeeld-links tot de echte pagina's online staan.",
+          provisional_url: 'Voorlopige URL',
+          play_desc: 'Android: hetzelfde Multihero-universum zodra de vermelding live staat.',
+          apple_desc: 'iPhone & iPad: voorbeeldlink; vervangen door de echte app-ID.',
+          open_play: 'Openen in Play Store',
+          open_app: 'Openen in App Store',
+          closing_text: 'Waar wacht je op? De kaart verovert zichzelf niet.',
+          cta_enter: 'Multihero binnen',
+          float_cta: 'Spelen op pc →',
+        },
+        Russian: {
+          brand_presents: 'представляет',
+          aria_language: 'Язык',
+          nav_minigames: 'Мини-игры',
+          nav_bestiary: 'Бестиарий',
+          nav_heroes: 'Герои',
+          nav_download: 'Скачать',
+          eyebrow: '100 уровней · таблицы 2–10 · мультиплеер',
+          h1_line1: 'А если матешка',
+          h1_line2: 'станет твоей любимой',
+          h1_line3: 'ИГРОЙ?',
+          lede:
+            '<strong>Multihero</strong> отправляет тебя на эпическую карту: бои по таблицам, 3D-гонки, ежедневная миссия и дуэли с друзьями. <strong>На ПК в браузере</strong> или <strong>на мобильном</strong>. Учить таблицу умножения ещё никогда не было так соблазнительно.',
+          cta_play_pc: 'Играть на ПК',
+          cta_download: 'Скачать приложение',
+          stats_heroes: 'героев',
+          stats_levels: 'уровней',
+          stats_monsters: 'монстров',
+          stats_minigames: 'мини-игр',
+          section_gameplay_tag: 'Геймплей',
+          section_minigames_title: 'Мини-игры, которые не отпускают',
+          section_minigames_sub:
+            'Та же карта — совсем разные приключения. Выбирай, как будешь рвать таблицы.',
+          mg1_tag: 'Бой',
+          mg1_badge: 'К боссу<br />за трофеем!',
+          mg1_title: 'Бои по таблицам',
+          mg1_text:
+            'Уникальные монстры-боссы: каждый верный ответ бьёт по боссу и приближает маткоины.',
+          mg2_tag: '3D · Раннер',
+          mg2_badge: 'Беги и<br />попади!',
+          mg2_title: 'Hero Runner 3D',
+          mg2_text: 'Скорость, арки ответов и космические декорации. Чистый математический адреналин.',
+          mg3_tag: 'Ежедневка',
+          mg3_badge: 'Ежедневная<br />миссия!',
+          mg3_title: 'Ежедневная миссия',
+          mg3_text:
+            'Маршрут, платформы и попадания в движении: недельный вызов, приковывающий к календарю.',
+          mg4_tag: 'Дуэль',
+          mg4_badge: 'Вызови<br />друзей!',
+          mg4_title: 'Мультиплеер',
+          mg4_text: 'Код героя, дуэли и смех с друзьями: таблицы ещё никогда не были такими социальными.',
+          section_bestiary_tag: 'Бестиарий',
+          section_bestiary_title: '100 монстров, которых нужно одолеть',
+          section_bestiary_sub:
+            'От Yelo до грозного Punchy: каждый уровень — новая тварь, готовая пасть… от матешки.',
+          section_roster_tag: 'Состав',
+          section_heroes_title: '20 героев. 20 легенд.',
+          section_heroes_sub:
+            'Выбери портрет и прочти историю. У каждого — свой характер, цвет и место на карте.',
+          prev_hero: 'Предыдущий герой',
+          next_hero: 'Следующий герой',
+          hero_tag_speed: 'Экстремальная скорость',
+          section_mobile_tag: 'Мобильный',
+          section_download_title: 'Забери его в карман',
+          section_download_sub:
+            'Сканируй код и открой магазин. Пока ссылки-заглушки — заменим на реальные.',
+          provisional_url: 'Временный URL',
+          play_desc: 'Android: та же вселенная Multihero, как только страница выйдет.',
+          apple_desc: 'iPhone и iPad: пример ссылки; заменить на реальный ID.',
+          open_play: 'Открыть в Play Store',
+          open_app: 'Открыть в App Store',
+          closing_text: 'Чего ждёшь? Карта сама себя не покорит.',
+          cta_enter: 'Войти в Multihero',
+          float_cta: 'Играть на ПК →',
+        },
+      };
+
+      /* =======================  HERO BIOS × 8 LANGS  ======================= */
+      var BIOS = {
+        English: [
+          'Brave and always ready for action, Leo shines with his blue energy and never gives up. His hero heart beats stronger than any challenge!',
+          'Friend of nature and magical flowers, Nia makes joy grow wherever she goes. With her green energy, every battle turns into a garden of fun!',
+          "Silent but unstoppable, Max uses his dark power to catch enemies off guard. When he shows up, it's already too late to run!",
+          'Adorable style, dazzling power: Lia lights up every moment. Her sweetness hides an incredible strength!',
+          'Elegant and brave, Teo protects everyone with his golden armour. Always ready to help with a smile!',
+          'Nobody wields violet energy like Vega. Fast, clever and always with a trick up her sleeve. Watch out!',
+          'Strong, determined and full of energy, Axel never steps back. The perfect teammate for any mission!',
+          'With her shining cape and futuristic style, Kira uses magical energy to dazzle everyone. Pure spark!',
+          'Nico is the fastest of them all: he runs like the wind and pops up where you least expect. Not even lightning can keep up!',
+          'With her magical staff and calm, Luna controls ice and light. When she acts, everything turns brilliant and powerful!',
+          'Clever and brave, Orion always has the right tool. He can fix any problem in seconds!',
+          'Bright as the sun, Aria inspires everyone with her golden energy. Her power lights up even the toughest moments!',
+          'Mysterious and with glowing eyes, Dax harnesses an incredible energy. When he steps up, everything gets thrilling!',
+          'Cheerful, colourful and full of life, Elia turns every challenge into a party. Her energy is pure fun!',
+          'From the ocean to space, Kai masters water and adventure. Always ready to explore the unknown!',
+          'Nova is pure speed and energy: she runs so fast she leaves light trails. Impossible to catch!',
+          'Strong as a mountain, Titan never gives up. His power is so huge it makes the ground tremble!',
+          'Calm yet powerful, Aura uses her magic to protect and help. Her energy is pure harmony!',
+          'With fire in his hands and courage in his heart, Rex is pure action. Always ready to light up the battle!',
+          'Fun, clever and a little cheeky, Zira blends tech and magic. She always has a brilliant plan!',
+        ],
+        Spanish: [
+          'Valiente y siempre listo para la acción, Leo brilla con su energía azul y nunca se rinde. ¡Su corazón de héroe es más fuerte que cualquier desafío!',
+          'Amiga de la naturaleza y de las flores mágicas, Nia hace crecer la alegría allá donde va. ¡Con su energía verde, convierte cada batalla en un jardín de diversión!',
+          'Silencioso pero imparable, Max usa su poder oscuro para sorprender a los enemigos. ¡Cuando aparece, ya es demasiado tarde para escapar!',
+          'Con su estilo adorable y su poder brillante, Lia ilumina cualquier situación. ¡Su ternura esconde una fuerza increíble!',
+          'Elegante y valiente, Teo protege a todos con su armadura dorada. ¡Siempre está listo para ayudar con una sonrisa!',
+          'Domina la energía violeta como nadie. Vega es rápida, lista y siempre tiene un truco bajo la manga. ¡Cuidado con su poder!',
+          'Fuerte, decidido y lleno de energía, Axel nunca da un paso atrás. ¡Es el compañero perfecto para cualquier misión!',
+          'Con su capa brillante y su estilo futurista, Kira usa su energía mágica para sorprender a todos. ¡Es pura chispa!',
+          'Nico es el más rápido de todos: corre como el viento y aparece donde menos te lo esperas. ¡Ni un rayo puede seguirle el ritmo!',
+          'Con su bastón mágico y su calma, Luna controla el hielo y la luz. ¡Cuando actúa, todo se vuelve brillante y poderoso!',
+          'Ingenioso y valiente, Orion siempre tiene la herramienta perfecta. ¡Puede arreglar cualquier problema en segundos!',
+          'Brillante como el sol, Aria inspira a todos con su energía dorada. ¡Su poder ilumina incluso los momentos más difíciles!',
+          'Misterioso y con ojos brillantes, Dax controla una energía increíble. ¡Cuando entra en acción, todo se vuelve emocionante!',
+          'Alegre, colorida y llena de vida, Elia convierte cualquier reto en una fiesta. ¡Su energía es pura diversión!',
+          'Desde el océano hasta el espacio, Kai domina el agua y la aventura. ¡Siempre está listo para explorar lo desconocido!',
+          'Nova es pura velocidad y energía: corre tan rápido que deja estelas de luz a su paso. ¡Es imposible atraparla!',
+          'Fuerte como una montaña, Titan nunca se rinde. ¡Su poder es tan grande que hace temblar el suelo!',
+          'Tranquila pero poderosa, Aura usa su magia para proteger y ayudar. ¡Su energía es pura armonía!',
+          'Con fuego en sus manos y valentía en su corazón, Rex es pura acción. ¡Siempre listo para encender la batalla!',
+          'Divertida, inteligente y un poco traviesa, Zira combina tecnología y magia. ¡Siempre tiene un plan brillante!',
+        ],
+        Catalan: [
+          "Valent i sempre a punt per a l'acció, Leo brilla amb la seva energia blava i no es rendeix mai. El seu cor d'heroi és més fort que qualsevol repte!",
+          'Amiga de la natura i de les flors màgiques, la Nia fa créixer l’alegria allà on va. Amb la seva energia verda, cada batalla es converteix en un jardí de diversió!',
+          'Silenciós però imparable, el Max fa servir el seu poder fosc per sorprendre els enemics. Quan apareix, ja és massa tard per escapar!',
+          "Amb el seu estil adorable i el seu poder brillant, la Lia il·lumina qualsevol moment. La seva tendresa amaga una força increïble!",
+          "Elegant i valent, el Teo protegeix tothom amb la seva armadura daurada. Sempre disposat a ajudar amb un somriure!",
+          "Ningú domina l'energia violeta com la Vega. Ràpida, llesta i amb un truc sempre sota la màniga. Compte amb el seu poder!",
+          "Fort, decidit i ple d'energia, l'Axel no fa mai un pas enrere. El company perfecte per a qualsevol missió!",
+          "Amb la seva capa brillant i l'estil futurista, la Kira fa servir energia màgica per sorprendre tothom. Pura guspira!",
+          'El Nico és el més ràpid de tots: corre com el vent i apareix on menys t’ho esperes. Ni un llamp li segueix el ritme!',
+          "Amb el seu bastó màgic i la seva calma, la Luna controla el gel i la llum. Quan actua, tot es torna brillant i poderós!",
+          "Enginyós i valent, l'Orion sempre té l'eina perfecta. Arregla qualsevol problema en un tres i no res!",
+          "Brillant com el sol, l'Aria inspira tothom amb la seva energia daurada. El seu poder il·lumina fins i tot els moments més difícils!",
+          'Misteriós i amb ulls brillants, el Dax controla una energia increïble. Quan entra en acció, tot esdevé emocionant!',
+          "Alegre, plena de colors i de vida, l'Elia converteix qualsevol repte en una festa. La seva energia és pura diversió!",
+          "De l'oceà a l'espai, el Kai domina l'aigua i l'aventura. Sempre a punt per explorar el desconegut!",
+          "La Nova és pura velocitat i energia: corre tan ràpid que deixa estels de llum al seu pas. Impossible atrapar-la!",
+          "Fort com una muntanya, el Titan no es rendeix. El seu poder és tan gran que fa tremolar la terra!",
+          "Tranquil·la però poderosa, l'Aura fa servir la seva màgia per protegir i ajudar. La seva energia és pura harmonia!",
+          "Amb foc a les mans i valentia al cor, el Rex és pura acció. Sempre a punt per encendre la batalla!",
+          "Divertida, intel·ligent i una mica entremaliada, la Zira combina tecnologia i màgia. Sempre té un pla brillant!",
+        ],
+        French: [
+          "Brave et toujours prêt à l'action, Leo brille de son énergie bleue et n'abandonne jamais. Son cœur de héros bat plus fort que n'importe quel défi !",
+          "Amie de la nature et des fleurs magiques, Nia fait pousser la joie partout où elle passe. Avec son énergie verte, chaque combat devient un jardin d'amusement !",
+          "Silencieux mais imparable, Max utilise son pouvoir sombre pour surprendre les ennemis. Quand il apparaît, il est déjà trop tard pour fuir !",
+          'Style adorable, pouvoir étincelant : Lia illumine chaque moment. Sa tendresse cache une force incroyable !',
+          "Élégant et courageux, Teo protège tout le monde avec son armure dorée. Toujours prêt à aider avec le sourire !",
+          "Nul ne maîtrise l'énergie violette comme Vega. Rapide, futée et toujours un tour dans sa manche. Attention à sa puissance !",
+          "Fort, déterminé et plein d'énergie, Axel ne recule jamais. Le partenaire parfait pour chaque mission !",
+          "Avec sa cape étincelante et son style futuriste, Kira surprend tout le monde grâce à son énergie magique. Pur éclat !",
+          "Nico est le plus rapide de tous : il court comme le vent et surgit là où tu ne l'attends pas. Même l'éclair reste à la traîne !",
+          "Avec son bâton magique et son calme, Luna maîtrise la glace et la lumière. Quand elle agit, tout devient brillant et puissant !",
+          "Ingénieux et courageux, Orion a toujours le bon outil. Il résout n'importe quel problème en quelques secondes !",
+          "Brillante comme le soleil, Aria inspire tout le monde avec son énergie dorée. Sa puissance éclaire même les instants les plus durs !",
+          "Mystérieux avec des yeux brillants, Dax maîtrise une énergie incroyable. Dès qu'il entre en scène, tout devient palpitant !",
+          'Joyeuse, colorée et pleine de vie, Elia transforme chaque défi en fête. Son énergie est pur plaisir !',
+          "De l'océan à l'espace, Kai maîtrise l'eau et l'aventure. Toujours prêt à explorer l'inconnu !",
+          "Nova est vitesse et énergie pures : elle court si vite qu'elle laisse des traînées de lumière. Impossible à rattraper !",
+          "Fort comme une montagne, Titan n'abandonne jamais. Sa puissance fait trembler le sol !",
+          "Calme mais puissante, Aura utilise sa magie pour protéger et aider. Son énergie est harmonie pure !",
+          "Avec le feu dans les mains et le courage au cœur, Rex est pure action. Toujours prêt à enflammer le combat !",
+          "Drôle, maligne et un brin espiègle, Zira mélange tech et magie. Elle a toujours un plan brillant !",
+        ],
+        Portuguese: [
+          'Corajoso e sempre pronto para a ação, o Leo brilha com a sua energia azul e nunca desiste. O seu coração de herói é mais forte que qualquer desafio!',
+          'Amiga da natureza e das flores mágicas, a Nia faz crescer alegria por onde passa. Com a sua energia verde, cada batalha vira um jardim de diversão!',
+          'Silencioso mas imparável, o Max usa o seu poder obscuro para apanhar os inimigos de surpresa. Quando aparece, já é tarde para fugir!',
+          'Com um estilo adorável e um poder brilhante, a Lia ilumina qualquer momento. A sua ternura esconde uma força incrível!',
+          'Elegante e corajoso, o Teo protege toda a gente com a sua armadura dourada. Está sempre pronto a ajudar com um sorriso!',
+          'Ninguém domina a energia violeta como a Vega. Rápida, esperta e sempre com um truque na manga. Cuidado com o poder dela!',
+          'Forte, determinado e cheio de energia, o Axel nunca recua. O parceiro perfeito para qualquer missão!',
+          'Com a sua capa brilhante e estilo futurista, a Kira usa energia mágica para surpreender toda a gente. Pura faísca!',
+          'O Nico é o mais rápido de todos: corre como o vento e aparece onde menos esperas. Nem um relâmpago o segue!',
+          'Com o seu cajado mágico e calma, a Luna controla o gelo e a luz. Quando age, tudo se torna brilhante e poderoso!',
+          'Engenhoso e corajoso, o Orion tem sempre a ferramenta certa. Resolve qualquer problema em segundos!',
+          'Brilhante como o sol, a Aria inspira todos com a sua energia dourada. O seu poder ilumina até os momentos mais difíceis!',
+          'Misterioso e de olhos brilhantes, o Dax controla uma energia incrível. Quando entra em ação, tudo fica emocionante!',
+          'Alegre, colorida e cheia de vida, a Elia transforma qualquer desafio numa festa. A sua energia é pura diversão!',
+          'Do oceano ao espaço, o Kai domina a água e a aventura. Está sempre pronto para explorar o desconhecido!',
+          'A Nova é pura velocidade e energia: corre tão rápido que deixa rastos de luz. Impossível de apanhar!',
+          'Forte como uma montanha, o Titan nunca desiste. O seu poder é tão grande que faz o chão tremer!',
+          'Calma mas poderosa, a Aura usa a sua magia para proteger e ajudar. A sua energia é pura harmonia!',
+          'Com fogo nas mãos e coragem no coração, o Rex é pura ação. Pronto para acender a batalha!',
+          'Divertida, inteligente e um pouco travessa, a Zira mistura tecnologia e magia. Tem sempre um plano brilhante!',
+        ],
+        German: [
+          'Mutig und stets bereit, Leo strahlt mit seiner blauen Energie und gibt nie auf. Sein Heldenherz ist stärker als jede Herausforderung!',
+          'Freundin der Natur und der Zauberblumen: Nia lässt Freude überall sprießen. Mit ihrer grünen Energie wird jedes Gefecht zum Spaßgarten!',
+          'Leise, aber unaufhaltsam: Max setzt seine dunkle Macht ein, um Gegner zu überraschen. Wenn er auftaucht, ist es zu spät zur Flucht!',
+          'Niedlich und strahlend: Lia erhellt jeden Moment. Hinter ihrer Sanftheit steckt unglaubliche Stärke!',
+          'Elegant und mutig: Teo schützt alle mit seiner goldenen Rüstung. Er hilft stets – und immer mit einem Lächeln!',
+          'Niemand beherrscht violette Energie wie Vega. Schnell, clever und immer mit einem Trick im Ärmel. Vorsicht vor ihrer Kraft!',
+          'Stark, entschlossen, voller Power: Axel weicht nie zurück. Der perfekte Partner für jede Mission!',
+          'Mit glitzerndem Umhang und futuristischem Stil zaubert Kira mit magischer Energie. Funkenwerk pur!',
+          'Nico ist der Schnellste: Er rennt wie der Wind und taucht auf, wo du es nicht erwartest. Nicht mal Blitze halten mit!',
+          'Mit magischem Stab und Gelassenheit beherrscht Luna Eis und Licht. Wenn sie handelt, wird alles glanzvoll und mächtig!',
+          'Einfallsreich und mutig: Orion hat stets das passende Werkzeug. Jedes Problem in Sekunden gelöst!',
+          'Hell wie die Sonne: Aria inspiriert alle mit goldener Energie. Ihre Kraft erleuchtet selbst die härtesten Momente!',
+          'Geheimnisvoll und mit leuchtenden Augen bändigt Dax unglaubliche Energie. Sein Auftritt macht alles aufregend!',
+          'Fröhlich, bunt und voller Leben: Elia macht aus jeder Herausforderung eine Party. Pure Spaßenergie!',
+          'Vom Ozean bis ins All: Kai beherrscht Wasser und Abenteuer. Immer bereit, Unbekanntes zu erkunden!',
+          'Nova ist pure Geschwindigkeit: Sie rast so schnell, dass sie Lichtspuren zieht. Unfangbar!',
+          'Stark wie ein Berg: Titan gibt nie auf. Seine Wucht bringt den Boden zum Beben!',
+          'Ruhig, doch mächtig: Aura schützt und hilft mit ihrer Magie. Reine Harmonie!',
+          'Feuer in den Händen, Mut im Herzen: Rex ist pure Action. Bereit, jeden Kampf zu entfachen!',
+          'Witzig, klug und ein bisschen frech mixt Zira Technik und Magie. Immer mit einem genialen Plan!',
+        ],
+        Dutch: [
+          'Dapper en altijd klaar voor actie, Leo straalt met zijn blauwe energie en geeft nooit op. Zijn heldenhart is sterker dan elke uitdaging!',
+          'Vriendin van de natuur en magische bloemen: Nia laat vreugde opbloeien waar ze gaat. Met haar groene energie wordt elk gevecht een tuin vol plezier!',
+          'Stil maar onstuitbaar: Max gebruikt zijn donkere kracht om vijanden te verrassen. Als hij opduikt, is vluchten geen optie meer!',
+          'Schattig met stralende kracht: Lia licht elk moment op. Haar zachtheid verbergt ongelooflijke kracht!',
+          'Elegant en dapper beschermt Teo iedereen in zijn gouden harnas. Altijd klaar om te helpen, met een glimlach!',
+          'Niemand hanteert paarse energie zoals Vega. Snel, slim en altijd een truc paraat. Pas op voor haar kracht!',
+          'Sterk, vastberaden en boordevol energie: Axel wijkt nooit. De perfecte maatje voor elke missie!',
+          'Met haar glanzende cape en futuristische stijl verrast Kira iedereen met magische energie. Pure spetters!',
+          'Nico is de snelste van allemaal: rent als de wind en duikt op waar je hem niet verwacht. Zelfs bliksem kan hem niet bijbenen!',
+          'Met haar magische staf en kalmte heerst Luna over ijs en licht. Als zij actie onderneemt, straalt alles van kracht!',
+          'Vindingrijk en dapper heeft Orion altijd het juiste gereedschap. Elk probleem in seconden opgelost!',
+          'Stralend als de zon inspireert Aria iedereen met haar gouden energie. Haar kracht verlicht zelfs de zwaarste momenten!',
+          'Mysterieus en met glanzende ogen beheerst Dax een ongelooflijke energie. Als hij in actie komt, wordt alles spannend!',
+          'Vrolijk, kleurrijk en boordevol leven maakt Elia van elke uitdaging een feest. Pure pret-energie!',
+          'Van de oceaan tot de ruimte heerst Kai over water en avontuur. Altijd klaar om het onbekende te ontdekken!',
+          'Nova is pure snelheid en energie: ze rent zó snel dat ze lichtsporen achterlaat. Onvangbaar!',
+          'Sterk als een berg geeft Titan nooit op. Zijn kracht doet de grond beven!',
+          'Rustig maar krachtig gebruikt Aura haar magie om te beschermen en te helpen. Pure harmonie!',
+          'Met vuur in zijn handen en moed in zijn hart is Rex pure actie. Altijd klaar om het gevecht aan te wakkeren!',
+          'Grappig, slim en een tikje ondeugend combineert Zira techniek met magie. Altijd met een briljant plan!',
+        ],
+        Russian: [
+          'Смелый и всегда готов к действию — Leo сияет синей энергией и никогда не сдаётся. Его сердце героя сильнее любой задачи!',
+          'Подруга природы и волшебных цветов — Nia растит радость всюду. Зелёная энергия превращает любой бой в сад веселья!',
+          'Молчаливый, но неудержимый — Max пользуется тёмной силой и застаёт врагов врасплох. Появился — бежать уже поздно!',
+          'Очаровательный стиль и сияющая сила — Lia освещает любое мгновение. За мягкостью скрывается невероятная мощь!',
+          'Элегантный и храбрый — Teo защищает всех в золотой броне. Всегда готов помочь с улыбкой!',
+          'Никто не владеет фиолетовой энергией как Vega. Быстрая, умная и всегда с козырем в рукаве!',
+          'Сильный, решительный и полон сил — Axel никогда не отступает. Идеальный напарник для любой миссии!',
+          'В блестящем плаще и футуристическом стиле — Kira удивляет всех магической энергией. Сплошные искры!',
+          'Nico — самый быстрый из всех: летит, как ветер, и появляется там, где не ждали. Даже молнии не угнаться!',
+          'С магическим посохом и спокойствием — Luna управляет льдом и светом. Стоит ей двинуться — всё озаряется силой!',
+          'Смекалистый и храбрый — у Orion всегда нужный инструмент. Любая проблема — за секунды!',
+          'Яркая как солнце — Aria вдохновляет всех золотой энергией. Её сила освещает даже самые трудные мгновения!',
+          'Таинственный, с сияющими глазами — Dax управляет невероятной энергией. Как выходит на сцену — всё становится захватывающим!',
+          'Весёлая, яркая и полная жизни — Elia превращает любой вызов в праздник. Её энергия — чистая радость!',
+          'От океана до космоса — Kai властелин воды и приключений. Всегда готов к неизведанному!',
+          'Nova — чистая скорость и энергия: мчится так быстро, что оставляет световые следы. Не догнать!',
+          'Крепкий как гора — Titan не сдаётся. Его мощь заставляет землю дрожать!',
+          'Спокойная, но могучая — Aura защищает и помогает своей магией. Чистая гармония!',
+          'Огонь в руках и смелость в сердце — Rex это чистая экшн-сила. Всегда готов поджечь битву!',
+          'Весёлая, умная и чуть проказливая — Zira сочетает технологии и магию. Всегда с блестящим планом!',
+        ],
+      };
+
+      /* =======================  MAIN  ======================= */
+      (function () {
+        var LANG_MAP = {
+          en: 'English',
+          es: 'Spanish',
+          ca: 'Catalan',
+          fr: 'French',
+          pt: 'Portuguese',
+          de: 'German',
+          nl: 'Dutch',
+          ru: 'Russian',
+        };
+        var CODE_FROM_LANG = {};
+        Object.keys(LANG_MAP).forEach(function (k) {
+          CODE_FROM_LANG[LANG_MAP[k]] = k;
+        });
+
+        function detectLang() {
+          try {
+            var saved = localStorage.getItem('multihero-landing-lang');
+            if (saved && I18N[saved]) return saved;
+          } catch (e) {}
+          var list = navigator.languages && navigator.languages.length
+            ? navigator.languages
+            : [navigator.language || 'en'];
+          for (var i = 0; i < list.length; i++) {
+            var primary = (list[i] || '').toLowerCase().split('-')[0];
+            if (LANG_MAP[primary]) return LANG_MAP[primary];
+          }
+          return 'English';
+        }
+
+        /* ---------- Monster background cycle ---------- */
+        var monsterFiles = [
+          '1-Yelo.png','4-Mova.png','8-Turi.png','12-Drizi.png','18-Monti.png','25-Dono.png',
+          '31-Bytey.png','40-Helmo.png','48-Finny.png','55-Stelo.png','66-Blazo.png',
+          '74-Stringo.png','83-Drako.png','92-Dashy.png','100-Punchy.png',
+        ];
+        var mBase = './assets/monsters/';
+        var layerA = document.getElementById('monster-layer-a');
+        var layerB = document.getElementById('monster-layer-b');
+        var mi = 0;
+        var useA = true;
+        function setLayer(el, file) {
+          el.style.backgroundImage = 'url(' + mBase + file + ')';
+        }
+        function tickMonster() {
+          mi = (mi + 1) % monsterFiles.length;
+          var next = monsterFiles[mi];
+          if (useA) {
+            setLayer(layerB, next);
+            layerB.classList.add('is-on');
+            layerA.classList.remove('is-on');
+          } else {
+            setLayer(layerA, next);
+            layerA.classList.add('is-on');
+            layerB.classList.remove('is-on');
+          }
+          useA = !useA;
+        }
+        setLayer(layerA, monsterFiles[0]);
+        layerA.classList.add('is-on');
+        setInterval(tickMonster, 4600);
+
+        /* ---------- Monster marquee ---------- */
+        var track = document.getElementById('monster-track');
+        if (track) {
+          var chips = '';
+          var loop = monsterFiles.concat(monsterFiles);
+          for (var j = 0; j < loop.length; j++) {
+            chips += '<div class="mon-chip"><img src="' + mBase + loop[j] + '" alt="" loading="lazy" /></div>';
+          }
+          track.innerHTML = chips;
+        }
+
+        /* ---------- Heroes ---------- */
+        var files = [
+          '1-Leo.jpg','2-Nia.jpg','3-Max.jpg','4-Lia.jpg','5-Teo.jpg',
+          '6-Vega.jpg','7-Axel.jpg','8-Kira.jpg','9-Nico.jpg','10-Luna.jpg',
+          '11-Orion.jpg','12-Aria.jpg','13-Dax.jpg','14-Elia.jpg','15-Kai.jpg',
+          '16-Nova.jpg','17-Titan.jpg','18-Aura.jpg','19-Rex.jpg','20-Zira.jpg',
+        ];
+        var names = [
+          'Leo','Nia','Max','Lia','Teo','Vega','Axel','Kira','Nico','Luna',
+          'Orion','Aria','Dax','Elia','Kai','Nova','Titan','Aura','Rex','Zira',
+        ];
+
+        var hBase = './assets/heros/';
+        var picker = document.getElementById('hero-picker');
+        var bioName = document.getElementById('bio-name');
+        var bioText = document.getElementById('bio-text');
+        var bioTag = document.getElementById('bio-tag');
+        var fName = document.getElementById('f-name');
+        var fNum = document.getElementById('f-num');
+        var fImgA = document.getElementById('f-img-a');
+        var fImgB = document.getElementById('f-img-b');
+        var featuredUseA = true;
+        var current = 0;
+        var currentLang = 'English';
+
+        function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+        function refreshBio() {
+          var dict = I18N[currentLang] || I18N.English;
+          var biosArr = BIOS[currentLang] || BIOS.English;
+          bioName.textContent = names[current];
+          bioText.textContent = biosArr[current] || '';
+          if (current === 8 || current === 15) {
+            bioTag.textContent = dict.hero_tag_speed;
+            bioTag.hidden = false;
+          } else {
+            bioTag.hidden = true;
+            bioTag.textContent = '';
+          }
+          fName.textContent = names[current].toUpperCase();
+          fNum.textContent = pad2(current + 1);
+        }
+
+        function selectHero(idx) {
+          current = (idx + files.length) % files.length;
+          var thumbs = picker.querySelectorAll('.hero-thumb');
+          for (var t = 0; t < thumbs.length; t++) {
+            thumbs[t].classList.toggle('is-active', t === current);
+            thumbs[t].setAttribute('aria-selected', t === current ? 'true' : 'false');
+          }
+          var url = "url('" + hBase + files[current] + "')";
+          if (featuredUseA) {
+            fImgB.style.backgroundImage = url;
+            fImgB.classList.add('is-on');
+            fImgA.classList.remove('is-on');
+          } else {
+            fImgA.style.backgroundImage = url;
+            fImgA.classList.add('is-on');
+            fImgB.classList.remove('is-on');
+          }
+          featuredUseA = !featuredUseA;
+          refreshBio();
+        }
+
+        var ph = '';
+        for (var i = 0; i < files.length; i++) {
+          ph +=
+            '<button type="button" class="hero-thumb" role="tab" aria-selected="' +
+            (i === 0 ? 'true' : 'false') +
+            '" data-i="' + i + '">' +
+            '<img src="' + hBase + files[i] + '" alt="' + names[i] + '" loading="lazy" width="120" height="120" />' +
+            '<span class="num">' + pad2(i + 1) + '</span>' +
+            '<span class="nm">' + names[i] + '</span>' +
+            '</button>';
+        }
+        picker.innerHTML = ph;
+        picker.addEventListener('click', function (e) {
+          var btn = e.target.closest('.hero-thumb');
+          if (!btn) return;
+          selectHero(parseInt(btn.getAttribute('data-i'), 10));
+        });
+        document.getElementById('prev-hero').addEventListener('click', function () {
+          selectHero(current - 1);
+        });
+        document.getElementById('next-hero').addEventListener('click', function () {
+          selectHero(current + 1);
+        });
+        selectHero(0);
+
+        /* ---------- i18n apply ---------- */
+        function applyLang(lang) {
+          if (!I18N[lang]) lang = 'English';
+          currentLang = lang;
+          document.documentElement.lang = CODE_FROM_LANG[lang] || 'en';
+          var dict = I18N[lang];
+          document.querySelectorAll('[data-i18n]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n');
+            if (dict[key] != null) el.textContent = dict[key];
+          });
+          document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+            var key = el.getAttribute('data-i18n-html');
+            if (dict[key] != null) el.innerHTML = dict[key];
+          });
+          document.querySelectorAll('[data-i18n-attr]').forEach(function (el) {
+            var spec = el.getAttribute('data-i18n-attr');
+            spec.split(';').forEach(function (pair) {
+              var parts = pair.split(':');
+              if (parts.length !== 2) return;
+              var attr = parts[0].trim();
+              var key = parts[1].trim();
+              if (attr && key && dict[key] != null) el.setAttribute(attr, dict[key]);
+            });
+          });
+          var code = (CODE_FROM_LANG[lang] || 'en').toUpperCase();
+          var cur = document.getElementById('lang-current');
+          if (cur) cur.textContent = code;
+          document.querySelectorAll('#lang-menu li').forEach(function (li) {
+            li.classList.toggle('is-active', li.getAttribute('data-lang') === lang);
+          });
+          refreshBio();
+          try { localStorage.setItem('multihero-landing-lang', lang); } catch (e) {}
+        }
+
+        /* ---------- Language switcher UI ---------- */
+        var langBtn = document.getElementById('lang-btn');
+        var langMenu = document.getElementById('lang-menu');
+        function openMenu() {
+          langMenu.hidden = false;
+          langBtn.setAttribute('aria-expanded', 'true');
+        }
+        function closeMenu() {
+          langMenu.hidden = true;
+          langBtn.setAttribute('aria-expanded', 'false');
+        }
+        langBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          if (langMenu.hidden) openMenu();
+          else closeMenu();
+        });
+        langMenu.addEventListener('click', function (e) {
+          var li = e.target.closest('li[data-lang]');
+          if (!li) return;
+          applyLang(li.getAttribute('data-lang'));
+          closeMenu();
+        });
+        document.addEventListener('click', function (e) {
+          if (!langMenu.hidden && !langMenu.contains(e.target) && e.target !== langBtn) closeMenu();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !langMenu.hidden) closeMenu();
+        });
+
+        applyLang(detectLang());
+
+        /* ---------- Reveal on scroll ---------- */
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                  en.target.classList.add('in');
+                  io.unobserve(en.target);
+                }
+              });
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+          );
+          document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+        } else {
+          document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
+        }
+
+        /* ---------- Floating CTA ---------- */
+        var floatCta = document.getElementById('float-cta');
+        var heroSection = document.querySelector('.hero');
+        function onScroll() {
+          var threshold = heroSection ? heroSection.offsetHeight * 0.85 : 400;
+          if (window.scrollY > threshold) floatCta.classList.add('show');
+          else floatCta.classList.remove('show');
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        /* ---------- Sparks ---------- */
+        var hoverSparkCooldown = 0;
+        function spawnSpark(x, y) {
+          var s = document.createElement('span');
+          s.className = 'spark';
+          s.style.left = x + 'px';
+          s.style.top = y + 'px';
+          var dx = (Math.random() - 0.5) * 120;
+          var dy = -20 - Math.random() * 80;
+          s.style.setProperty('--dx', dx + 'px');
+          s.style.setProperty('--dy', dy + 'px');
+          document.body.appendChild(s);
+          setTimeout(function () { s.remove(); }, 720);
+        }
+        document.querySelectorAll('.sparkly').forEach(function (btn) {
+          btn.addEventListener('mousemove', function () {
+            var now = performance.now();
+            if (now - hoverSparkCooldown < 60) return;
+            hoverSparkCooldown = now;
+            var rect = btn.getBoundingClientRect();
+            spawnSpark(rect.left + Math.random() * rect.width, rect.top + Math.random() * rect.height);
+          });
+          btn.addEventListener('click', function () {
+            var rect = btn.getBoundingClientRect();
+            for (var k = 0; k < 14; k++) {
+              spawnSpark(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            }
+          });
+        });
+
+        /* ---------- 3D tilt ---------- */
+        var tiltCards = document.querySelectorAll('.shot-card.tilt');
+        tiltCards.forEach(function (card) {
+          var raf = 0;
+          card.addEventListener('mousemove', function (e) {
+            var rect = card.getBoundingClientRect();
+            var px = (e.clientX - rect.left) / rect.width - 0.5;
+            var py = (e.clientY - rect.top) / rect.height - 0.5;
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(function () {
+              card.style.transform =
+                'perspective(900px) rotateY(' + (px * 10).toFixed(2) + 'deg) rotateX(' + (-py * 10).toFixed(2) + 'deg) translateZ(0)';
+            });
+          });
+          card.addEventListener('mouseleave', function () {
+            cancelAnimationFrame(raf);
+            card.style.transform = '';
+          });
+        });
+
+        /* ---------- Parallax floats ---------- */
+        var floats = document.querySelectorAll('.hero-floats .float');
+        window.addEventListener(
+          'mousemove',
+          function (e) {
+            var cx = window.innerWidth / 2;
+            var cy = window.innerHeight / 2;
+            var dx = (e.clientX - cx) / cx;
+            var dy = (e.clientY - cy) / cy;
+            floats.forEach(function (el, idx) {
+              var mult = idx === 1 ? 18 : 12;
+              el.style.translate = dx * mult + 'px ' + dy * mult + 'px';
+            });
+          },
+          { passive: true }
+        );
+      })();
+    </script>
+  </body>
+</html>

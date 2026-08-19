@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "932741212983",
+    "firebase_url": "https://multihero-server-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "multihero-server",
+    "storage_bucket": "multihero-server.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932741212983:android:78c6edff9ad06caafa88b2",
+        "android_client_info": {
+          "package_name": "com.caimanint.multihero"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "932741212983-pmlretoselk6hmjsb515m4ls9nocbokh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.caimanint.multihero",
+            "certificate_hash": "24870c3a96d3dfb31c4c0889de9722d9a209a80e"
+          }
+        },
+        {
+          "client_id": "932741212983-0hjm3ih98l56p2fidcsqkc9a02cfn0t9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCngmAzmsFAADqurYd2PhwPPK01d05aSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932741212983-0hjm3ih98l56p2fidcsqkc9a02cfn0t9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

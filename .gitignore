@@ -1,0 +1,40 @@
+node_modules/
+public/img/monsters/.resize-stage/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+
+# Secretos y config local
+.env*
+!.env.example
+android/local.properties
+android/keystore.properties
+android/keystore/
+android/app/src/main/assets/adi-registration.properties
+
+# Builds Android / artefactos de release
+*.apk
+*.aab
+android/app/build/
+android/build/
+android/.gradle/
+android/capacitor-cordova-android-plugins/
+
+# Builds iOS (se generará en Mac)
+ios/App/build/
+ios/App/Pods/
+ios/DerivedData/
+
+# Herramientas / caché / IDE
+.vite/
+.claude/
+.tmp-video-frames/
+android/.idea/
+*.iml
+~$*
+
+# Office / temporales Windows
+Thumbs.db
+desktop.ini
